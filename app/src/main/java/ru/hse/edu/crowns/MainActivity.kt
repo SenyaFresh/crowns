@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import ru.hse.edu.crowns.presentation.AllGamesScreen
 import ru.hse.edu.crowns.presentation.LoginScreen
 import ru.hse.edu.crowns.presentation.RegistrationScreen
 import ru.hse.edu.crowns.ui.theme.AppTheme
@@ -48,10 +49,24 @@ fun MainNavigation() {
                 startDestination = AuthGraph.LoginScreen,
             ) {
                 composable<AuthGraph.LoginScreen> {
-                    LoginScreen { navController.navigate(AuthGraph.RegistrationScreen) }
+                    LoginScreen(
+                        onNavigateToRegistration = { navController.navigate(AuthGraph.RegistrationScreen) },
+                        onNavigateToMainScreen = { navController.navigate(GamesGraph) }
+                    )
                 }
                 composable<AuthGraph.RegistrationScreen> {
-                    RegistrationScreen()
+                    RegistrationScreen(
+                        onNavigateToLogin = { navController.navigate(AuthGraph.LoginScreen) },
+                        onNavigateToMainScreen = { navController.navigate(GamesGraph) }
+                    )
+                }
+            }
+
+            navigation<GamesGraph>(
+                startDestination = GamesGraph.AllGamesScreen,
+            ) {
+                composable<GamesGraph.AllGamesScreen> {
+                    AllGamesScreen()
                 }
             }
         }

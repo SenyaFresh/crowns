@@ -28,7 +28,10 @@ import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.ui.theme.AppTheme
 
 @Composable
-fun RegistrationScreen() {
+fun RegistrationScreen(
+    onNavigateToLogin: () -> Unit,
+    onNavigateToMainScreen: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,17 +74,17 @@ fun RegistrationScreen() {
             visualTransformation = PasswordVisualTransformation()
         )
 
-        PrimaryButton(text = "Подтвердить", onClick = { /*TODO*/ })
+        PrimaryButton(text = "Зарегистрироваться", onClick = onNavigateToMainScreen)
 
-        SecondaryButton(text = "Уже есть аккаунт", onClick = { /*TODO*/ })
+        SecondaryButton(text = "Уже есть аккаунт", onClick = onNavigateToLogin)
     }
 }
 
 
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
 fun RegistrationScreenPreview() {
     AppTheme {
-        RegistrationScreen()
+        RegistrationScreen({ }, { })
     }
 }

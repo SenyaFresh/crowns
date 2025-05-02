@@ -20,6 +20,7 @@ fun PrimaryButton(
     Button(
         modifier = modifier.fillMaxWidth().height(48.dp),
         onClick = onClick,
+        elevation = ButtonDefaults.buttonElevation(2.dp),
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
         Text(

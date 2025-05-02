@@ -30,6 +30,7 @@ import ru.hse.edu.crowns.ui.theme.AppTheme
 @Composable
 fun LoginScreen(
     onNavigateToRegistration: () -> Unit,
+    onNavigateToMainScreen: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -66,17 +67,17 @@ fun LoginScreen(
             visualTransformation = PasswordVisualTransformation()
         )
 
-        PrimaryButton(text = "Войти", onClick = { /*TODO*/ })
+        PrimaryButton(text = "Войти", onClick = onNavigateToMainScreen)
 
-        SecondaryButton(text = "Регистрация", onClick = onNavigateToRegistration )
+        SecondaryButton(text = "Создать аккаунт", onClick = onNavigateToRegistration )
     }
 }
 
 
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
     AppTheme {
-        LoginScreen {}
+        LoginScreen({ }, { })
     }
 }

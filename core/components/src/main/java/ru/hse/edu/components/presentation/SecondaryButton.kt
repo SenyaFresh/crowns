@@ -19,6 +19,7 @@ fun SecondaryButton(
 ) {
     Button(
         modifier = modifier.fillMaxWidth().height(48.dp),
+        elevation = ButtonDefaults.buttonElevation(2.dp),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
     ) {

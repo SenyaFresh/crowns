@@ -10,5 +10,14 @@ data object AuthGraph {
 
     @Serializable
     data object RegistrationScreen
+}
 
+@Serializable
+data object GamesGraph {
+
+    @Serializable
+    data object AllGamesScreen
+
+    @Serializable
+    data object GameScreen
 }
