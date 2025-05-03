@@ -1,6 +1,7 @@
 package ru.hse.edu.crowns
 
 import kotlinx.serialization.Serializable
+import ru.hse.edu.components.presentation.Difficulty
 
 @Serializable
 data object AuthGraph {
@@ -19,5 +20,5 @@ data object GamesGraph {
     data object AllGamesScreen
 
     @Serializable
-    data object GameScreen
+    data class GameScreen(val difficulty: String)
 }

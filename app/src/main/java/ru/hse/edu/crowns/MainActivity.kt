@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.crowns.presentation.AllGamesScreen
 import ru.hse.edu.crowns.presentation.GameScreen
 import ru.hse.edu.crowns.presentation.LoginScreen
@@ -68,14 +69,13 @@ fun MainNavigation() {
                 startDestination = GamesGraph.AllGamesScreen,
             ) {
                 composable<GamesGraph.AllGamesScreen> {
-                    AllGamesScreen { navController.navigate(GamesGraph.GameScreen) }
+                    AllGamesScreen { navController.navigate(GamesGraph.GameScreen(it.label)) }
                 }
 
                 composable<GamesGraph.GameScreen> {
+                    val difficulty = Difficulty.valueOf(it.arguments?.getString("difficulty"))
                     GameScreen(
-                        n = 6,
-                        time = 90,
-                        tips = 3,
+                        difficulty,
                         onTimeEnd = {},
                         onExit = { navController.popBackStack() },
                     )

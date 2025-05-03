@@ -18,7 +18,7 @@ data class WrongQueenCell(override val row: Int, override val column: Int) :
                 modifier = Modifier.fillMaxSize(0.8f),
                 imageVector = ImageVector.vectorResource(id = R.drawable.crown_icon),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.error
             )
         }
     )

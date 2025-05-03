@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
+import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.model.game.Cell
@@ -50,9 +51,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun GameScreen(
-    n: Int,
-    time: Int,
-    tips: Int,
+    difficulty: Difficulty,
     onTimeEnd: () -> Unit,
     onExit: () -> Unit
 ) {
@@ -60,17 +59,18 @@ fun GameScreen(
 
     val configuration = LocalConfiguration.current
     val cellSize = remember(configuration) {
-        (configuration.screenWidthDp.dp - 32.dp) / n
+        (configuration.screenWidthDp.dp - 32.dp) / difficulty.n
     }
 
     BackHandler {
         onExit()
     }
 
-    var timeLeft by remember { mutableIntStateOf(time) }
-    var tipsLeft by remember { mutableIntStateOf(tips) }
+    var timeLeft by remember { mutableIntStateOf(difficulty.time) }
+    var tipsLeft by remember { mutableIntStateOf(difficulty.tips) }
 
     LaunchedEffect(Unit) {
+        viewModel.generateLevel(difficulty.n, difficulty.startCount)
         while (timeLeft > 0) {
             delay(1.seconds)
             timeLeft--
@@ -149,11 +149,11 @@ fun GameScreen(
                     shape = RoundedCornerShape(8.dp)
                 )
         ) {
-            repeat(n) { row ->
+            repeat(difficulty.n) { row ->
                 Row(
                     modifier = Modifier
                 ) {
-                    repeat(n) { column ->
+                    repeat(difficulty.n) { column ->
                         Box(
                             modifier = Modifier
                                 .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant)
@@ -239,5 +239,5 @@ fun GameScreen(
 @Preview(showBackground = true)
 @Composable
 fun GameScreenPreview() {
-    GameScreen(8, 120, 3, {}, {})
+    GameScreen(Difficulty.Hard, {}, {})
 }

@@ -29,13 +29,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.components.presentation.GameCard
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.R
 
 @Composable
-fun AllGamesScreen(onGameClick: () -> Unit) {
+fun AllGamesScreen(onGameClick: (Difficulty) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -82,22 +83,22 @@ fun AllGamesScreen(onGameClick: () -> Unit) {
             GameCard(
                 title = "Queens",
                 gameIconPainter = painterResource(id = R.drawable.queens_green),
-                onPlayClick = { onGameClick() }
+                onPlayClick = onGameClick
             )
             GameCard(
                 title = "Killer Sudoku",
                 gameIconPainter = painterResource(id = R.drawable.killer_sudoku_green),
-                onPlayClick = { onGameClick() }
+                onPlayClick = onGameClick
             )
             GameCard(
                 title = "Tango",
                 gameIconPainter = painterResource(id = R.drawable.tango_green),
-                onPlayClick = { onGameClick() }
+                onPlayClick = onGameClick
             )
             GameCard(
                 title = "N Ферзей",
                 gameIconPainter = painterResource(id = R.drawable.n_queens_green),
-                onPlayClick = { onGameClick() }
+                onPlayClick = onGameClick
             )
             Spacer(modifier = Modifier)
         }

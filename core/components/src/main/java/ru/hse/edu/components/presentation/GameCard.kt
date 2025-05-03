@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import ru.hse.edu.components.presentation.Difficulty.Companion.getNextDifficulty
 import ru.hse.edu.components.presentation.Difficulty.Easy
 import ru.hse.edu.components.presentation.Difficulty.Hard
 import ru.hse.edu.components.presentation.Difficulty.Medium
@@ -124,16 +125,57 @@ fun DifficultyButton(
 }
 
 
-sealed class Difficulty(val label: String, val color: Color) {
-    data object Easy : Difficulty(label = "Легко", color = Color(0xFF449E48))
-    data object Medium : Difficulty(label = "Средне", color = Color(0xFFFFA500))
-    data object Hard : Difficulty(label = "Сложно", color = Color(0xFF99231D))
-}
+sealed class Difficulty(
+    val label: String,
+    val color: Color,
+    val n: Int,
+    val time: Int,
+    val tips: Int,
+    val startCount: Int
+) {
+    data object Easy : Difficulty(
+        label = "Легко",
+        color = Color(0xFF449E48),
+        n = 5,
+        time = 120,
+        tips = 2,
+        startCount = 1
+    )
 
-fun getNextDifficulty(difficulty: Difficulty): Difficulty {
-    return when (difficulty) {
-        Easy -> Medium
-        Medium -> Hard
-        Hard -> Easy
+    data object Medium : Difficulty(
+        label = "Средне",
+        color = Color(0xFFFFA500),
+        n = 6,
+        time = 90,
+        tips = 2,
+        startCount = 2
+    )
+
+    data object Hard : Difficulty(
+        label = "Сложно",
+        color = Color(0xFF99231D),
+        n = 8,
+        time = 60,
+        tips = 1,
+        startCount = 3
+    )
+
+    companion object {
+        fun getNextDifficulty(difficulty: Difficulty): Difficulty {
+            return when (difficulty) {
+                Easy -> Medium
+                Medium -> Hard
+                Hard -> Easy
+            }
+        }
+
+        fun valueOf(string: String?): Difficulty {
+            return when (string) {
+                Easy.label -> Easy
+                Medium.label -> Medium
+                Hard.label -> Hard
+                else -> Easy
+            }
+        }
     }
 }
