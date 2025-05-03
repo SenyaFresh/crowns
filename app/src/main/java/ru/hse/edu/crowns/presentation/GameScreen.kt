@@ -1,7 +1,9 @@
 package ru.hse.edu.crowns.presentation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,21 +34,37 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
+import ru.hse.edu.crowns.model.game.Cell
+import ru.hse.edu.crowns.model.game.CellAction
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun GameScreen(n: Int, time: Int, tips: Int, onTimeEnd: () -> Unit) {
+fun GameScreen(
+    n: Int,
+    time: Int,
+    tips: Int,
+    onTimeEnd: () -> Unit,
+    onExit: () -> Unit
+) {
+    val viewModel = hiltViewModel<GameViewModel>()
+
     val configuration = LocalConfiguration.current
     val cellSize = remember(configuration) {
         (configuration.screenWidthDp.dp - 32.dp) / n
+    }
+
+    BackHandler {
+        onExit()
     }
 
     var timeLeft by remember { mutableIntStateOf(time) }
@@ -131,16 +149,29 @@ fun GameScreen(n: Int, time: Int, tips: Int, onTimeEnd: () -> Unit) {
                     shape = RoundedCornerShape(8.dp)
                 )
         ) {
-            repeat(n) {
+            repeat(n) { row ->
                 Row(
                     modifier = Modifier
                 ) {
-                    repeat(n) {
+                    repeat(n) { column ->
                         Box(
                             modifier = Modifier
                                 .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant)
                                 .size(cellSize)
-                        )
+                                .clickable { viewModel.onCellAction(CellAction(row, column)) },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            viewModel.gameState.startCells.find { it.row == row && it.column == column }
+                                ?.let {
+                                    Spacer(
+                                        Modifier
+                                            .fillMaxSize()
+                                            .background(Color.Gray.copy(alpha = 0.5f))
+                                    )
+                                    it.content.invoke()
+                                }
+                                ?: viewModel.gameState.playerCells.find { it.row == row && it.column == column }?.content?.invoke()
+                        }
                     }
                 }
             }
@@ -154,11 +185,22 @@ fun GameScreen(n: Int, time: Int, tips: Int, onTimeEnd: () -> Unit) {
                 .height(40.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            SecondaryButton(modifier = Modifier.weight(1f), text = "Выход") { }
+            SecondaryButton(
+                modifier = Modifier.weight(1f),
+                text = "Очистить",
+                onClick = viewModel::clearGameState
+            )
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            PrimaryButton(modifier = Modifier.weight(1f), text = "Подсказка") { }
+            PrimaryButton(
+                modifier = Modifier.weight(1f),
+                text = "Подсказка",
+                activated = tipsLeft > 0
+            ) {
+                tipsLeft--
+                // todo tip click
+            }
         }
 
         Card(
@@ -177,7 +219,7 @@ fun GameScreen(n: Int, time: Int, tips: Int, onTimeEnd: () -> Unit) {
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.inverseSurface
                 )
 
                 Text(
@@ -197,5 +239,5 @@ fun GameScreen(n: Int, time: Int, tips: Int, onTimeEnd: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun GameScreenPreview() {
-    GameScreen(8, 120, 3) { }
+    GameScreen(8, 120, 3, {}, {})
 }

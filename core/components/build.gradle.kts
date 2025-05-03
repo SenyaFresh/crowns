@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "ru.hse.edu.components"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26

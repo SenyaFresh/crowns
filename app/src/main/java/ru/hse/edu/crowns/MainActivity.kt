@@ -11,17 +11,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraph
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ru.hse.edu.crowns.presentation.AllGamesScreen
 import ru.hse.edu.crowns.presentation.GameScreen
 import ru.hse.edu.crowns.presentation.LoginScreen
 import ru.hse.edu.crowns.presentation.RegistrationScreen
 import ru.hse.edu.crowns.ui.theme.AppTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +40,7 @@ fun MainNavigation() {
     val navController = rememberNavController()
     Scaffold { padding ->
         NavHost(
-            navController = navController, startDestination = AuthGraph,
+            navController = navController, startDestination = GamesGraph,
             enterTransition = { fadeIn(tween(200)) },
             exitTransition = { fadeOut(tween(200)) },
             popEnterTransition = { fadeIn(tween(200)) },
@@ -71,7 +72,13 @@ fun MainNavigation() {
                 }
 
                 composable<GamesGraph.GameScreen> {
-                    GameScreen(6, 90, 3) { }
+                    GameScreen(
+                        n = 6,
+                        time = 90,
+                        tips = 3,
+                        onTimeEnd = {},
+                        onExit = { navController.popBackStack() },
+                    )
                 }
             }
         }

@@ -15,10 +15,12 @@ import androidx.compose.ui.unit.dp
 fun PrimaryButton(
     modifier: Modifier = Modifier,
     text: String,
+    activated: Boolean = true,
     onClick: () -> Unit
 ) {
     Button(
         modifier = modifier.fillMaxWidth().height(48.dp),
+        enabled = activated,
         onClick = onClick,
         elevation = ButtonDefaults.buttonElevation(2.dp),
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)

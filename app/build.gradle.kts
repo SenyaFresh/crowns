@@ -44,12 +44,14 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.material.icons)
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.ui.googlefonts)
     implementation(libs.dagger.hilt)
     ksp(libs.dagger.hilt.compiler)
+    ksp(libs.dagger.compiler)
     implementation(project(":core:common"))
     implementation(project(":core:common-impl"))
     implementation(project(":core:components"))
