@@ -49,9 +49,11 @@ fun GameCard(
         shape = MaterialTheme.shapes.extraLarge,
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(6.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(6.dp)
+        ) {
             Text(
                 modifier = Modifier.padding(vertical = 4.dp, horizontal = 24.dp),
                 text = title,
@@ -91,7 +93,7 @@ fun GameCard(
                         onClick = { difficulty = getNextDifficulty(difficulty) }
                     )
 
-                    PrimaryButton(text = "Играть") { }
+                    PrimaryButton(text = "Играть", onClick = { onPlayClick(difficulty) })
                 }
             }
         }

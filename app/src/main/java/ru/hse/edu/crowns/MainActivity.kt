@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import ru.hse.edu.crowns.presentation.AllGamesScreen
+import ru.hse.edu.crowns.presentation.GameScreen
 import ru.hse.edu.crowns.presentation.LoginScreen
 import ru.hse.edu.crowns.presentation.RegistrationScreen
 import ru.hse.edu.crowns.ui.theme.AppTheme
@@ -66,7 +67,11 @@ fun MainNavigation() {
                 startDestination = GamesGraph.AllGamesScreen,
             ) {
                 composable<GamesGraph.AllGamesScreen> {
-                    AllGamesScreen()
+                    AllGamesScreen { navController.navigate(GamesGraph.GameScreen) }
+                }
+
+                composable<GamesGraph.GameScreen> {
+                    GameScreen(6, 90, 3) { }
                 }
             }
         }

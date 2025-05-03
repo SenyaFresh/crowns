@@ -35,7 +35,7 @@ import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.R
 
 @Composable
-fun AllGamesScreen() {
+fun AllGamesScreen(onGameClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,20 +81,24 @@ fun AllGamesScreen() {
             Spacer(modifier = Modifier)
             GameCard(
                 title = "Queens",
-                gameIconPainter = painterResource(id = R.drawable.queens_green)
-            ) {}
+                gameIconPainter = painterResource(id = R.drawable.queens_green),
+                onPlayClick = { onGameClick() }
+            )
             GameCard(
                 title = "Killer Sudoku",
-                gameIconPainter = painterResource(id = R.drawable.killer_sudoku_green)
-            ) {}
+                gameIconPainter = painterResource(id = R.drawable.killer_sudoku_green),
+                onPlayClick = { onGameClick() }
+            )
             GameCard(
                 title = "Tango",
-                gameIconPainter = painterResource(id = R.drawable.tango_green)
-            ) {}
+                gameIconPainter = painterResource(id = R.drawable.tango_green),
+                onPlayClick = { onGameClick() }
+            )
             GameCard(
                 title = "N Ферзей",
-                gameIconPainter = painterResource(id = R.drawable.n_queens_green)
-            ) {}
+                gameIconPainter = painterResource(id = R.drawable.n_queens_green),
+                onPlayClick = { onGameClick() }
+            )
             Spacer(modifier = Modifier)
         }
     }
@@ -103,5 +107,5 @@ fun AllGamesScreen() {
 @Preview(showBackground = true)
 @Composable
 fun AllGamesScreenPreview() {
-    AllGamesScreen()
+    AllGamesScreen { }
 }
