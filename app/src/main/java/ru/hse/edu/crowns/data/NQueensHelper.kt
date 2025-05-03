@@ -4,7 +4,62 @@ import kotlin.random.Random
 
 object NQueensHelper {
 
-    fun generateLevel(n: Int, startCount: Int): List<Pair<Int, Int>> {
+    fun generateColoredLevel(n: Int): List<List<Int>> {
+        val positions = generateLevel(n)
+        if (positions.isEmpty()) return List(n) { List(n) { -1 } }
+
+        val board = MutableList(n) { MutableList(n) { -1 } }
+        val territoryFrontiers = MutableList(n) { ArrayDeque<Pair<Int, Int>>() }
+        val directions = listOf(0 to 1, 1 to 0, 0 to -1, -1 to 0)
+        val random = Random
+
+        for ((color, pos) in positions.withIndex()) {
+            val (r, c) = pos
+            board[r][c] = color
+            territoryFrontiers[color].addLast(r to c)
+        }
+
+        fun freeNeighbors(r: Int, c: Int) = directions
+            .map { (dr, dc) -> r + dr to c + dc }
+            .filter { (nr, nc) ->
+                nr in 0 until n && nc in 0 until n && board[nr][nc] == -1
+            }
+
+        var unfilled = n * n - n
+
+        while (unfilled > 0) {
+            val activeColors = territoryFrontiers
+                .mapIndexedNotNull { idx, q ->
+                    if (q.any { freeNeighbors(it.first, it.second).isNotEmpty() }) idx else null
+                }
+                .shuffled(random)
+
+            for (color in activeColors) {
+                if (unfilled == 0) break
+
+                val queue = territoryFrontiers[color]
+                repeat(queue.size) {
+                    val (r, c) = queue.removeFirst()
+                    val neigh = freeNeighbors(r, c)
+                    if (neigh.isNotEmpty()) {
+                        val (nr, nc) = neigh.random(random)
+                        board[nr][nc] = color
+                        queue.addLast(nr to nc)
+                        if (freeNeighbors(r, c).isNotEmpty()) {
+                            queue.addLast(r to c)
+                        }
+                        unfilled--
+                        return@repeat
+                    }
+                }
+            }
+        }
+
+        return board
+    }
+
+
+    fun generateDefaultLevel(n: Int, startCount: Int): List<Pair<Int, Int>> {
         return generateLevel(n).shuffled().take(startCount)
     }
 

@@ -22,7 +22,7 @@ class GameViewModel @Inject constructor() : BaseViewModel() {
     fun generateLevel(n: Int, startCount: Int) {
         this.n = n
         gameState = GameState(
-            NQueensHelper.generateLevel(n, startCount)
+            NQueensHelper.generateDefaultLevel(n, startCount)
                 .map { CorrectQueenCell(it.first, it.second) }, emptyList()
         )
     }
