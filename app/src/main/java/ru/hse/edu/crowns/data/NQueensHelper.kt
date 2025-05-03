@@ -18,16 +18,14 @@ object NQueensHelper {
             for (col in cols) {
                 if (isValidMove(row, col, positions)) {
                     positions.add(row to col)
-                    if (backtrack(row + 1)) {
-                        return true
-                    }
+                    if (backtrack(row + 1)) return true
                     positions.removeAt(positions.lastIndex)
                 }
             }
             return false
         }
-        val found = backtrack(0)
-        return if (found) positions else emptyList()
+
+        return if (backtrack(0)) positions else emptyList()
     }
 
     fun isValidMove(row: Int, col: Int, positions: List<Pair<Int, Int>>): Boolean {
@@ -40,4 +38,38 @@ object NQueensHelper {
         return true
     }
 
+    fun generateHint(n: Int, positions: List<Pair<Int, Int>>): Pair<Int, Int>? {
+        val occupiedRows = positions.map { it.first }.toSet()
+        for (row in 0 until n) {
+            if (row in occupiedRows) continue
+            for (col in 0 until n) {
+                if (!isValidMove(row, col, positions)) continue
+                val trial = positions.toMutableList().apply { add(row to col) }
+                if (canSolveFrom(n, trial)) {
+                    return row to col
+                }
+            }
+        }
+        return null
+    }
+
+    private fun canSolveFrom(n: Int, positions: MutableList<Pair<Int, Int>>): Boolean {
+        val occupiedRows = positions.map { it.first }.toSet()
+
+        fun backtrack(row: Int): Boolean {
+            if (row == n) return true
+            if (row in occupiedRows) return backtrack(row + 1)
+
+            for (col in 0 until n) {
+                if (isValidMove(row, col, positions)) {
+                    positions.add(row to col)
+                    if (backtrack(row + 1)) return true
+                    positions.removeAt(positions.lastIndex)
+                }
+            }
+            return false
+        }
+
+        return backtrack(0)
+    }
 }

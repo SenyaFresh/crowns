@@ -17,8 +17,10 @@ import javax.inject.Inject
 class GameViewModel @Inject constructor() : BaseViewModel() {
     var gameState by mutableStateOf(GameState(emptyList(), emptyList()))
         private set
+    private var n: Int = -1
 
     fun generateLevel(n: Int, startCount: Int) {
+        this.n = n
         gameState = GameState(
             NQueensHelper.generateLevel(n, startCount)
                 .map { CorrectQueenCell(it.first, it.second) }, emptyList()
@@ -27,6 +29,17 @@ class GameViewModel @Inject constructor() : BaseViewModel() {
 
     fun clearGameState() {
         gameState = gameState.copy(playerCells = emptyList())
+    }
+
+    fun getHint() {
+        val hint = NQueensHelper.generateHint(n, getQueensPositions())
+        if (hint != null) {
+            gameState = gameState.copy(
+                playerCells = gameState.playerCells.plus(CorrectQueenCell(hint.first, hint.second))
+            )
+        } else {
+            toaster.showToast("Подсказка: минимум один из ферзей стоит неправильно.")
+        }
     }
 
     fun onCellAction(action: CellAction) {

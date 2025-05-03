@@ -45,7 +45,6 @@ import kotlinx.coroutines.delay
 import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
-import ru.hse.edu.crowns.model.game.Cell
 import ru.hse.edu.crowns.model.game.CellAction
 import kotlin.time.Duration.Companion.seconds
 
@@ -199,7 +198,7 @@ fun GameScreen(
                 activated = tipsLeft > 0
             ) {
                 tipsLeft--
-                // todo tip click
+                viewModel.getHint()
             }
         }
 

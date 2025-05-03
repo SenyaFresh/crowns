@@ -60,7 +60,7 @@ fun GameCard(
                 text = title,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary
             )
             Row(
