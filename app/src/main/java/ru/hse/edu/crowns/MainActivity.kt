@@ -75,8 +75,7 @@ fun MainNavigation() {
                 composable<GamesGraph.GameScreen> {
                     val difficulty = Difficulty.valueOf(it.arguments?.getString("difficulty"))
                     GameScreen(
-                        difficulty,
-                        onTimeEnd = {},
+                        difficulty = difficulty,
                         onExit = { navController.popBackStack() },
                     )
                 }

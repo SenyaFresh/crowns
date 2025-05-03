@@ -30,8 +30,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.hse.edu.components.presentation.Difficulty.Companion.getNextDifficulty
 import ru.hse.edu.components.presentation.Difficulty.Easy
-import ru.hse.edu.components.presentation.Difficulty.Hard
-import ru.hse.edu.components.presentation.Difficulty.Medium
 
 @Composable
 fun GameCard(

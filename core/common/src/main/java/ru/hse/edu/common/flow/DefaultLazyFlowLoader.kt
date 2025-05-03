@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ru.hse.edu.common.ResultContainer
+import ru.hse.edu.common.flow.DefaultLazyFlowLoader.Value.InstantValue
+import ru.hse.edu.common.flow.DefaultLazyFlowLoader.Value.LoadValue
 
 class DefaultLazyFlowLoader<T>(
     private var valueLoader: ValueLoader<T>,

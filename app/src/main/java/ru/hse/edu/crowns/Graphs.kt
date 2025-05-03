@@ -1,7 +1,6 @@
 package ru.hse.edu.crowns
 
 import kotlinx.serialization.Serializable
-import ru.hse.edu.components.presentation.Difficulty
 
 @Serializable
 data object AuthGraph {

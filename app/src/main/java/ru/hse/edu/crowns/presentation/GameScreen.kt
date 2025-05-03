@@ -21,7 +21,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,14 +49,16 @@ import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.model.game.CellAction
+import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import kotlin.time.Duration.Companion.seconds
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreen(
     difficulty: Difficulty,
-    onTimeEnd: () -> Unit,
     onExit: () -> Unit
 ) {
+    var gameSessionState by remember { mutableStateOf(GameSessionState.GOING) }
     val viewModel = hiltViewModel<GameViewModel>()
 
     val configuration = LocalConfiguration.current
@@ -61,8 +66,13 @@ fun GameScreen(
         (configuration.screenWidthDp.dp - 32.dp) / difficulty.n
     }
 
-    BackHandler {
-        onExit()
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (!showDialog) {
+        BackHandler {
+            gameSessionState = GameSessionState.EXIT
+            showDialog = true
+        }
     }
 
     var timeLeft by remember { mutableIntStateOf(difficulty.time) }
@@ -70,11 +80,23 @@ fun GameScreen(
 
     LaunchedEffect(Unit) {
         viewModel.generateLevel(difficulty.n, difficulty.startCount)
-        while (timeLeft > 0) {
+        while (timeLeft > 0 && gameSessionState != GameSessionState.WIN) {
             delay(1.seconds)
             timeLeft--
         }
-        onTimeEnd()
+        if (!showDialog) {
+            gameSessionState = GameSessionState.TIME_ENDED
+            showDialog = true
+        }
+    }
+
+    LaunchedEffect(viewModel.gameState.playerCells) {
+        if (viewModel.gameState.playerCells.filterIsInstance<CorrectQueenCell>().size == difficulty.n - difficulty.startCount
+            && !showDialog
+        ) {
+            gameSessionState = GameSessionState.WIN
+            showDialog = true
+        }
     }
 
     // Таймер и подсказки.
@@ -232,11 +254,86 @@ fun GameScreen(
                 )
             }
         }
+
+        if (showDialog && gameSessionState != GameSessionState.GOING) {
+            BasicAlertDialog(onDismissRequest = {
+                if (gameSessionState == GameSessionState.EXIT) {
+                    gameSessionState = GameSessionState.GOING
+                    showDialog = false
+                }
+            }) {
+                Card {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        val title = remember(gameSessionState) {
+                            when (gameSessionState) {
+                                GameSessionState.WIN -> "Победа!"
+                                GameSessionState.TIME_ENDED -> "Время вышло!"
+                                else -> "Покинуть уровень?"
+                            }
+                        }
+                        val bodyText = remember(gameSessionState) {
+                            when (gameSessionState) {
+                                GameSessionState.WIN -> "Поздравляем, вы победили! Вы заработали стока та монет."
+                                GameSessionState.TIME_ENDED -> "К сожалению, вы проиграли и не заработали монет."
+                                else -> "Вы уверены, что хотите выйти? Весь прогресс будет потерян."
+                            }
+                        }
+                        val positiveButtonText = remember(gameSessionState) {
+                            when (gameSessionState) {
+                                GameSessionState.WIN,
+                                GameSessionState.TIME_ENDED -> "Выйти"
+                                else -> "Да"
+                            }
+                        }
+                        Text(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            text = title,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.inverseSurface
+                        )
+                        Text(
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            text = bodyText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.inverseSurface
+                        )
+
+                        Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                            if (gameSessionState == GameSessionState.EXIT) {
+                                SecondaryButton(text = "Отмена", modifier = Modifier.weight(1f)) {
+                                    gameSessionState = GameSessionState.GOING
+                                    showDialog = false
+                                }
+                                Spacer(modifier = Modifier.weight(0.1f))
+                            }
+                            PrimaryButton(text = positiveButtonText, modifier = Modifier.weight(1f)) {
+                                showDialog = false
+                                onExit()
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
+}
+
+enum class GameSessionState {
+    GOING,
+    WIN,
+    TIME_ENDED,
+    EXIT
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GameScreenPreview() {
-    GameScreen(Difficulty.Hard, {}, {})
+    GameScreen(Difficulty.Hard) {}
 }
