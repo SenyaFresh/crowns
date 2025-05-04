@@ -134,7 +134,7 @@ sealed class Difficulty(
     data object Easy : Difficulty(
         label = "Легко",
         color = Color(0xFF449E48),
-        n = 5,
+        n = 6,
         time = 120,
         tips = 2,
         startCount = 1
@@ -145,8 +145,8 @@ sealed class Difficulty(
         color = Color(0xFFFFA500),
         n = 6,
         time = 90,
-        tips = 2,
-        startCount = 2
+        tips = 1,
+        startCount = 1
     )
 
     data object Hard : Difficulty(

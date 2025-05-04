@@ -122,29 +122,41 @@ object TangoHelper {
         conditions: List<TangoCondition>,
         n: Int
     ): Boolean {
-        conditions.firstOrNull { it.firstPosition == move.position || it.secondPosition == move.position }
+        conditions.firstOrNull { it.firstPosition == move.position }
             ?.let { condition ->
-                cells.firstOrNull { condition.secondPosition == it.position || condition.firstPosition == it.position }
+                cells.firstOrNull { condition.secondPosition == it.position }
                     ?.let {
-                        if ((it.isSun == move.isSun) != condition.equal) return false
+                        if ((it.isSun == move.isSun) != condition.equal) {
+                            return false
+                        }
+                    }
+            }
+
+        conditions.firstOrNull { it.secondPosition == move.position }
+            ?.let { condition ->
+                cells.firstOrNull { condition.firstPosition == it.position }
+                    ?.let {
+                        if ((it.isSun == move.isSun) != condition.equal) {
+                            return false
+                        }
                     }
             }
 
         val c = move.position.column
         val r = move.position.row
         for (start in listOf(c - 2, c - 1, c)) {
-            if (cells.any { it.position.column == start && it.position.row == r } == move.isSun &&
-                cells.any { it.position.column == start + 1 && it.position.row == r } == move.isSun &&
-                cells.any { it.position.column == start + 2 && it.position.row == r } == move.isSun
+            if (cells.firstOrNull { it.position.column == start && it.position.row == r }?.isSun == move.isSun &&
+                cells.firstOrNull { it.position.column == start + 1 && it.position.row == r }?.isSun == move.isSun &&
+                cells.firstOrNull { it.position.column == start + 2 && it.position.row == r }?.isSun == move.isSun
             ) {
                 return false
             }
         }
 
         for (start in listOf(r - 2, r - 1, r)) {
-            if (cells.any { it.position.row == start && it.position.column == r } == move.isSun &&
-                cells.any { it.position.row == start + 1 && it.position.column == r } == move.isSun &&
-                cells.any { it.position.row == start + 2 && it.position.column == r } == move.isSun
+            if (cells.firstOrNull { it.position.row == start && it.position.column == r }?.isSun == move.isSun &&
+                cells.firstOrNull { it.position.row == start + 1 && it.position.column == r }?.isSun == move.isSun &&
+                cells.firstOrNull { it.position.row == start + 2 && it.position.column == r }?.isSun == move.isSun
             ) {
                 return false
             }
