@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,10 +18,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.DragHandle
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -164,9 +169,12 @@ fun GameScreen(
             }
         }
 
+
         // Игровое поле
-        Column(
+        Box(
             modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min)
                 .padding(vertical = 12.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .border(
@@ -175,60 +183,78 @@ fun GameScreen(
                     shape = RoundedCornerShape(8.dp)
                 )
         ) {
-            repeat(difficulty.n) { row ->
-                Row(
-                    modifier = Modifier
-                ) {
-                    repeat(difficulty.n) { column ->
-                        val position = Position(row, column)
-                        Box(
-                            modifier = Modifier
-                                .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant)
-                                .size(cellSize)
-                                .clickable { viewModel.onCellAction(CellAction(position)) },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            when (viewModel) {
-                                is ColoredQueensViewModel -> {
-                                    Spacer(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .background(
-                                                if (viewModel.gameState.colors.isEmpty()) Color.Transparent
-                                                else colorsList[viewModel.gameState.colors[row][column]]
-                                            )
-                                    )
-                                    viewModel.gameState.startCells.find { it.position == position }?.content?.invoke()
-                                        ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
-                                }
+            Column {
+                repeat(difficulty.n) { row ->
+                    Row(
+                        modifier = Modifier
+                    ) {
+                        repeat(difficulty.n) { column ->
+                            val position = Position(row, column)
+                            Box(
+                                modifier = Modifier
+                                    .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant)
+                                    .size(cellSize)
+                                    .clickable { viewModel.onCellAction(CellAction(position)) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                when (viewModel) {
+                                    is ColoredQueensViewModel -> {
+                                        Spacer(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .background(
+                                                    if (viewModel.gameState.colors.isEmpty()) Color.Transparent
+                                                    else colorsList[viewModel.gameState.colors[row][column]]
+                                                )
+                                        )
+                                        viewModel.gameState.startCells.find { it.position == position }?.content?.invoke()
+                                            ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
+                                    }
 
-                                is NQueensGameViewModel -> {
-                                    viewModel.gameState.startCells.find { it.position == position }
-                                        ?.let {
-                                            Spacer(
-                                                Modifier
-                                                    .fillMaxSize()
-                                                    .background(Color.Gray.copy(alpha = 0.5f))
-                                            )
-                                            it.content.invoke()
-                                        }
-                                        ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
-                                }
-                                is TangoViewModel -> {
-                                    viewModel.gameState.startCells.find { it.position == position }
-                                        ?.let {
-                                            Spacer(
-                                                Modifier
-                                                    .fillMaxSize()
-                                                    .background(Color.Gray.copy(alpha = 0.5f))
-                                            )
-                                            it.content.invoke()
-                                        }
-                                        ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
+                                    is NQueensGameViewModel -> {
+                                        viewModel.gameState.startCells.find { it.position == position }
+                                            ?.let {
+                                                Spacer(
+                                                    Modifier
+                                                        .fillMaxSize()
+                                                        .background(Color.Gray.copy(alpha = 0.5f))
+                                                )
+                                                it.content.invoke()
+                                            }
+                                            ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
+                                    }
+
+                                    is TangoViewModel -> {
+                                        viewModel.gameState.startCells.find { it.position == position }
+                                            ?.let {
+                                                Spacer(
+                                                    Modifier
+                                                        .fillMaxSize()
+                                                        .background(Color.Gray.copy(alpha = 0.5f))
+                                                )
+                                                it.content.invoke()
+                                            }
+                                            ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
+                                    }
                                 }
                             }
                         }
                     }
+                }
+            }
+            if (viewModel is TangoViewModel) {
+                viewModel.gameState.conditions.forEach {
+                    val x = ((it.firstPosition.column + it.secondPosition.column).toDouble() / 2 * cellSize.value + cellSize.value / 2).dp
+                    val y = ((it.firstPosition.row + it.secondPosition.row).toDouble() / 2 * cellSize.value + cellSize.value / 2).dp
+                    Icon(
+                        imageVector = if (it.equal) Icons.Rounded.DragHandle else Icons.Rounded.Close,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .offset(x - cellSize / 8, y - cellSize / 8)
+                            .size(cellSize / 4)
+                            .background(MaterialTheme.colorScheme.surface, CircleShape),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
