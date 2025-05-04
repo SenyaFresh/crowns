@@ -74,6 +74,7 @@ object TangoHelper {
         val directions = listOf(0 to 1, 1 to 0, 0 to -1, -1 to 0)
 
         fun findNeighbor(position: Position) = directions
+            .shuffled()
             .map { (rowOffset, columnOffset) ->
                 Position(
                     position.row + rowOffset,
@@ -84,7 +85,7 @@ object TangoHelper {
                 neighborRow in 0 until n && neighborColumn in 0 until n
             }
 
-        while (conditions.size < n * 3 / 2) {
+        while (conditions.size < n * 2) {
             val row = Random.nextInt(n)
             val column = Random.nextInt(n)
             val pos = Position(row, column)
