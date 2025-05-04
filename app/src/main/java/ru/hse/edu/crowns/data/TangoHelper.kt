@@ -299,7 +299,7 @@ object TangoHelper {
         conditions.forEach { condition ->
             val first = cells.firstOrNull { it.position == condition.firstPosition }
             val second = cells.firstOrNull { it.position == condition.secondPosition }
-            if (first == second) return@forEach
+            if (first != null && second != null) return@forEach
             if (first != null) {
                 return TangoCell(
                     condition.secondPosition,
