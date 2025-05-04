@@ -6,8 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ru.hse.edu.crowns.data.NQueensHelper
 import ru.hse.edu.crowns.data.TangoHelper
 import ru.hse.edu.crowns.model.game.CellAction
+import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import ru.hse.edu.crowns.model.game.tango.TangoCell
 import ru.hse.edu.crowns.model.game.tango.TangoGameState
 import javax.inject.Inject
@@ -31,7 +33,18 @@ class TangoViewModel @Inject constructor() : GameViewModel() {
     }
 
     override fun getHint() {
-        TODO("Not yet implemented")
+        val hint = TangoHelper.generateHint(
+            n,
+            gameState.playerCells + gameState.startCells,
+            gameState.conditions
+        )
+        if (hint != null) {
+            gameState = gameState.copy(
+                playerCells = gameState.playerCells.plus(hint)
+            )
+        } else {
+            toaster.showToast("Подсказка: с текущей расстановкой нельзя найти решение.")
+        }
     }
 
     override fun onCellAction(action: CellAction) {

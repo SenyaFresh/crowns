@@ -163,11 +163,172 @@ object TangoHelper {
             }
         }
 
-        if (cells.count { it.position.column == c  && it.isSun == move.isSun} > n / 2) return false
+        if (cells.count { it.position.column == c && it.isSun == move.isSun } > n / 2) return false
 
-        if (cells.count { it.position.row == r  && it.isSun == move.isSun} > n / 2) return false
+        if (cells.count { it.position.row == r && it.isSun == move.isSun } > n / 2) return false
 
         return true
+    }
+
+    fun generateHint(n: Int, cells: List<TangoCell>, conditions: List<TangoCondition>): TangoCell? {
+
+        val directions = listOf(0 to 1, 1 to 0)
+
+        fun findSameNeighbors(position: Position, isSun: Boolean): List<TangoCell> {
+            val neighbors = directions.map { (rowOffset, columnOffset) ->
+                Position(
+                    position.row + rowOffset,
+                    position.column + columnOffset
+                )
+            }
+                .filter { (neighborRow, neighborColumn) ->
+                    neighborRow in 0 until n && neighborColumn in 0 until n
+                }
+            return cells.filter { cell ->
+                neighbors.any {
+                    it.row == cell.position.row
+                            && it.column == cell.position.column
+                            && cell.isSun == isSun
+                }
+            }
+        }
+
+        cells.forEach { cell ->
+            val neighbors = findSameNeighbors(cell.position, cell.isSun)
+            neighbors.forEach { neighbor ->
+                if (cell.position.row == neighbor.position.row) {
+                    val leftCol = cell.position.column - 1
+                    val rightCol = neighbor.position.column + 1
+                    if (leftCol > 0
+                        && !cells.any { it.position == Position(cell.position.row, leftCol) }
+                        && isValidMove(
+                            TangoCell(Position(cell.position.row, leftCol), !cell.isSun),
+                            cells,
+                            conditions,
+                            n
+                        )
+                    ) {
+                        return TangoCell(Position(cell.position.row, leftCol), !cell.isSun)
+                    }
+                    if (rightCol < n
+                        && !cells.any { it.position == Position(cell.position.row, rightCol) }
+                        && isValidMove(
+                            TangoCell(Position(cell.position.row, rightCol), !cell.isSun),
+                            cells,
+                            conditions,
+                            n
+                        )
+                    ) {
+                        return TangoCell(Position(cell.position.row, rightCol), !cell.isSun)
+                    }
+                } else {
+                    val topRow = cell.position.row - 1
+                    val bottomRow = neighbor.position.row + 1
+                    if (topRow > 0
+                        && !cells.any { it.position == Position(topRow, cell.position.column) }
+                        && isValidMove(
+                            TangoCell(Position(topRow, cell.position.column), !cell.isSun),
+                            cells,
+                            conditions,
+                            n
+                        )
+                    ) {
+                        return TangoCell(Position(topRow, cell.position.column), !cell.isSun)
+                    }
+                    if (bottomRow < n
+                        && !cells.any { it.position == Position(bottomRow, cell.position.column) }
+                        && isValidMove(
+                            TangoCell(Position(bottomRow, cell.position.column), !cell.isSun),
+                            cells,
+                            conditions,
+                            n
+                        )
+                    ) {
+                        return TangoCell(Position(bottomRow, cell.position.column), !cell.isSun)
+                    }
+                }
+            }
+        }
+
+        (0 until n).forEach { row ->
+            if (cells.count { it.position.row == row && it.isSun } == n / 2) {
+                (0 until n).forEach { column ->
+                    if (!cells.any { it.position.row == row && it.position.column == column }) {
+                        val hint = TangoCell(Position(row, column), false)
+                        if (isValidMove(hint, cells, conditions, n)) {
+                            return hint
+                        }
+                    }
+                }
+            }
+            if (cells.count { it.position.row == row && !it.isSun } == n / 2) {
+                (0 until n).forEach { column ->
+                    if (!cells.any { it.position.row == row && it.position.column == column }) {
+                        val hint = TangoCell(Position(row, column), true)
+                        if (isValidMove(hint, cells, conditions, n)) {
+                            return hint
+                        }
+                    }
+                }
+            }
+        }
+
+        (0 until n).forEach { column ->
+            if (cells.count { it.position.column == column && it.isSun } == n / 2) {
+                (0 until n).forEach { row ->
+                    if (!cells.any { it.position.row == row && it.position.column == column }) {
+                        val hint = TangoCell(Position(row, column), false)
+                        if (isValidMove(hint, cells, conditions, n)) {
+                            return hint
+                        }
+                    }
+                }
+            }
+            if (cells.count { it.position.column == column && !it.isSun } == n / 2) {
+                (0 until n).forEach { row ->
+                    if (!cells.any { it.position.row == row && it.position.column == column }) {
+                        val hint = TangoCell(Position(row, column), true)
+                        if (isValidMove(hint, cells, conditions, n)) {
+                            return hint
+                        }
+                    }
+                }
+            }
+        }
+
+        conditions.forEach { condition ->
+            val first = cells.firstOrNull { it.position == condition.firstPosition }
+            val second = cells.firstOrNull { it.position == condition.secondPosition }
+            if (first == second) return@forEach
+            if (first != null) {
+                return TangoCell(
+                    condition.secondPosition,
+                    if (condition.equal) first.isSun else !first.isSun
+                )
+            } else if (second != null) {
+                return TangoCell(
+                    condition.firstPosition,
+                    if (condition.equal) second.isSun else !second.isSun
+                )
+            }
+        }
+
+        (0 until n).forEach { row ->
+            (0 until n).forEach { column ->
+                if (!cells.any { it.position.row == row && it.position.column == column }) {
+                    var hint = TangoCell(Position(row, column), false)
+                    if (isValidMove(hint, cells, conditions, n)) {
+                        return hint
+                    }
+                    hint = hint.copy(isSun = true)
+                    if (isValidMove(hint, cells, conditions, n)) {
+                        return hint
+                    }
+                }
+            }
+        }
+
+        return null
     }
 
     private fun isRowValid(r: Int, c: Int, board: Array<BooleanArray>, n: Int): Boolean {
