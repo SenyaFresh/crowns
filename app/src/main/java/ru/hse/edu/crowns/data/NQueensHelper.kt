@@ -77,6 +77,21 @@ object NQueensHelper {
         return !occupiedColors.contains(colors[move.row][move.column])
     }
 
+    fun generateHintForColored(n: Int, positions: List<Position>, colors: ColorsMap): Position? {
+        val occupiedRows = positions.map { it.row }.toSet()
+        for (row in 0 until n) {
+            if (row in occupiedRows) continue
+            for (col in 0 until n) {
+                if (!isValidMoveForColored(Position(row, col), positions, colors)) continue
+                val trial = positions.toMutableList().apply { add(Position(row, col)) }
+                if (canSolveFrom(n, trial)) {
+                    return Position(row, col)
+                }
+            }
+        }
+        return null
+    }
+
 
     fun generateDefaultLevel(n: Int, startCount: Int): NQueensGameState {
         return NQueensGameState(

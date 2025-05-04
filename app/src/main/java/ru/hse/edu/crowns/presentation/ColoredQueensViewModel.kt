@@ -30,7 +30,14 @@ class ColoredQueensViewModel @Inject constructor(): GameViewModel() {
     }
 
     override fun getHint() {
-        TODO("Not yet implemented")
+        val hint = NQueensHelper.generateHintForColored(n, getQueensPositions(), gameState.colors)
+        if (hint != null) {
+            gameState = gameState.copy(
+                playerCells = gameState.playerCells.plus(CorrectQueenCell(hint))
+            )
+        } else {
+            toaster.showToast("Подсказка: минимум один из ферзей стоит неправильно.")
+        }
     }
 
     override fun onCellAction(action: CellAction) {
@@ -54,9 +61,10 @@ class ColoredQueensViewModel @Inject constructor(): GameViewModel() {
                         gameState = gameState.copy(
                             playerCells = gameState.playerCells.map {
                                 if (it.position == action.position) {
-                                    if (NQueensHelper.isValidMove(
+                                    if (NQueensHelper.isValidMoveForColored(
                                             action.position,
-                                            getQueensPositions()
+                                            getQueensPositions(),
+                                            gameState.colors
                                         )
                                     ) {
                                         CorrectQueenCell(action.position)

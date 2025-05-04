@@ -3,6 +3,7 @@ package ru.hse.edu.crowns.presentation
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.hse.edu.crowns.data.NQueensHelper
 import ru.hse.edu.crowns.model.game.CellAction
@@ -96,3 +97,14 @@ class NQueensGameViewModel @Inject constructor() : GameViewModel() {
     }
 
 }
+
+val colorsList = listOf(
+    Color(0xFFA6BCD3), // пастельный небесно-синий
+    Color(0xFFF8C695), // пастельный оранжевый
+    Color(0xFFF0ABAC), // пастельный коралловый
+    Color(0xFFBADBD8), // пастельный бирюзово-зелёный
+    Color(0xFFACD0A7), // пастельный светло-зелёный
+    Color(0xFFF6E4A3), // пастельный лимонный
+    Color(0xFFD7BCD0), // пастельный лавандовый
+    Color(0xFFFFCED3)  // пастельный розово-персиковый
+)

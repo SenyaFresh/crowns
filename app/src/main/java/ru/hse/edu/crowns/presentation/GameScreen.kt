@@ -62,7 +62,10 @@ fun GameScreen(
     onExit: () -> Unit
 ) {
     var gameSessionState by remember { mutableStateOf(GameSessionState.GOING) }
-    val viewModel = hiltViewModel<NQueensGameViewModel>()
+    val viewModel = when (gameType) {
+        GameType.COLORED_QUEENS -> hiltViewModel<ColoredQueensViewModel>()
+        else -> hiltViewModel<ColoredQueensViewModel>()
+    }
 
     val configuration = LocalConfiguration.current
     val cellSize = remember(configuration) {
@@ -186,13 +189,23 @@ fun GameScreen(
                                 .clickable { viewModel.onCellAction(CellAction(position)) },
                             contentAlignment = Alignment.Center
                         ) {
+                            if (gameType == GameType.COLORED_QUEENS) {
+                                Spacer(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(if (viewModel.gameState.colors.isEmpty()) Color.Transparent
+                                        else colorsList[viewModel.gameState.colors[row][column]])
+                                )
+                            }
                             viewModel.gameState.startCells.find { it.position == position }
                                 ?.let {
-                                    Spacer(
-                                        Modifier
-                                            .fillMaxSize()
-                                            .background(Color.Gray.copy(alpha = 0.5f))
-                                    )
+                                    if (gameType == GameType.N_QUEENS) {
+                                        Spacer(
+                                            Modifier
+                                                .fillMaxSize()
+                                                .background(Color.Gray.copy(alpha = 0.5f))
+                                        )
+                                    }
                                     it.content.invoke()
                                 }
                                 ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
@@ -290,6 +303,7 @@ fun GameScreen(
                             when (gameSessionState) {
                                 GameSessionState.WIN,
                                 GameSessionState.TIME_ENDED -> "Выйти"
+
                                 else -> "Да"
                             }
                         }
@@ -309,7 +323,11 @@ fun GameScreen(
                             color = MaterialTheme.colorScheme.inverseSurface
                         )
 
-                        Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp)
+                        ) {
                             if (gameSessionState == GameSessionState.EXIT) {
                                 SecondaryButton(text = "Отмена", modifier = Modifier.weight(1f)) {
                                     gameSessionState = GameSessionState.GOING
@@ -317,7 +335,10 @@ fun GameScreen(
                                 }
                                 Spacer(modifier = Modifier.weight(0.1f))
                             }
-                            PrimaryButton(text = positiveButtonText, modifier = Modifier.weight(1f)) {
+                            PrimaryButton(
+                                text = positiveButtonText,
+                                modifier = Modifier.weight(1f)
+                            ) {
                                 showDialog = false
                                 onExit()
                             }
