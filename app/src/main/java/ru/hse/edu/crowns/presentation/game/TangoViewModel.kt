@@ -23,7 +23,7 @@ class TangoViewModel @Inject constructor(): GameViewModel() {
     }
 
     override fun clearGameState() {
-        TODO("Not yet implemented")
+        gameState = gameState.copy(playerCells = emptyList())
     }
 
     override fun getHint() {

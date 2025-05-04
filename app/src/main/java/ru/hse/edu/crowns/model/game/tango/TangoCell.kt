@@ -11,7 +11,7 @@ import ru.hse.edu.crowns.R
 import ru.hse.edu.crowns.model.game.Cell
 import ru.hse.edu.crowns.model.game.Position
 
-class TangoCell(position: Position, isSun: Boolean) : Cell(
+class TangoCell(override val position: Position, val isSun: Boolean) : Cell(
     position,
     content = {
         Icon(

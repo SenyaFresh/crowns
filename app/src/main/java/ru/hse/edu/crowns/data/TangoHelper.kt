@@ -13,36 +13,6 @@ object TangoHelper {
             BooleanArray(n) { c -> (r + c) % 2 == 0 }
         }
 
-        fun isRowValid(r: Int, c: Int): Boolean {
-            val v = board[r][c]
-            for (start in listOf(c - 2, c - 1, c)) {
-                if (start >= 0 && start + 2 < n) {
-                    if (board[r][start] == v &&
-                        board[r][start + 1] == v &&
-                        board[r][start + 2] == v
-                    ) {
-                        return false
-                    }
-                }
-            }
-            return true
-        }
-
-        fun isColumnValid(r: Int, c: Int): Boolean {
-            val v = board[r][c]
-            for (start in listOf(r - 2, r - 1, r)) {
-                if (start >= 0 && start + 2 < n) {
-                    if (board[start][c] == v &&
-                        board[start + 1][c] == v &&
-                        board[start + 2][c] == v
-                    ) {
-                        return false
-                    }
-                }
-            }
-            return true
-        }
-
         fun swapRows(r1: Int, r2: Int) {
             for (c in 0 until n) {
                 val tmp = board[r1][c]
@@ -67,7 +37,13 @@ object TangoHelper {
             }
             swapRows(firstRow, secondRow)
             for (c in 0 until n) {
-                if (!isColumnValid(firstRow, c) || !isColumnValid(secondRow, c)) {
+                if (!isColumnValid(firstRow, c, board, n) || !isColumnValid(
+                        secondRow,
+                        c,
+                        board,
+                        n
+                    )
+                ) {
                     swapRows(firstRow, secondRow)
                     break
                 }
@@ -80,7 +56,13 @@ object TangoHelper {
             }
             swapColumns(firstColumn, secondColumn)
             for (r in 0 until n) {
-                if (!isRowValid(r, firstColumn) || !isRowValid(r, secondColumn)) {
+                if (!isRowValid(r, firstColumn, board, n) || !isRowValid(
+                        r,
+                        secondColumn,
+                        board,
+                        n
+                    )
+                ) {
                     swapColumns(firstColumn, secondColumn)
                     break
                 }
@@ -132,6 +114,85 @@ object TangoHelper {
             playerCells = emptyList(),
             conditions = conditions
         )
+    }
+
+    fun isValidMove(
+        move: TangoCell,
+        cells: List<TangoCell>,
+        conditions: List<TangoCondition>,
+        n: Int
+    ): Boolean {
+        conditions.firstOrNull { it.firstPosition == move.position || it.secondPosition == move.position }
+            ?.let { condition ->
+                cells.firstOrNull { condition.secondPosition == it.position || condition.firstPosition == it.position }
+                    ?.let {
+                        if ((it.isSun == move.isSun) != condition.equal) return false
+                    }
+            }
+
+        val c = move.position.column
+        val r = move.position.row
+        for (start in listOf(c - 2, c - 1, c)) {
+            if (cells.any { it.position.column == start && it.position.row == r } == move.isSun &&
+                cells.any { it.position.column == start + 1 && it.position.row == r } == move.isSun &&
+                cells.any { it.position.column == start + 2 && it.position.row == r } == move.isSun
+            ) {
+                return false
+            }
+        }
+
+        for (start in listOf(r - 2, r - 1, r)) {
+            if (cells.any { it.position.row == start && it.position.column == r } == move.isSun &&
+                cells.any { it.position.row == start + 1 && it.position.column == r } == move.isSun &&
+                cells.any { it.position.row == start + 2 && it.position.column == r } == move.isSun
+            ) {
+                return false
+            }
+        }
+
+        if ((0 until n)
+                .map { iterC -> cells.any { it.position.row == r && it.position.column == iterC && it.isSun == move.isSun } }
+                .count { true } == n / 2) {
+            return false
+        }
+
+        if ((0 until n)
+                .map { iterR -> cells.any { it.position.row == iterR && it.position.column == c && it.isSun == move.isSun } }
+                .count { true } == n / 2) {
+            return false
+        }
+
+        return true
+    }
+
+    private fun isRowValid(r: Int, c: Int, board: Array<BooleanArray>, n: Int): Boolean {
+        val v = board[r][c]
+        for (start in listOf(c - 2, c - 1, c)) {
+            if (start >= 0 && start + 2 < n) {
+                if (board[r][start] == v &&
+                    board[r][start + 1] == v &&
+                    board[r][start + 2] == v
+                ) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    private fun isColumnValid(r: Int, c: Int, board: Array<BooleanArray>, n: Int): Boolean {
+        val v = board[r][c]
+        for (start in listOf(r - 2, r - 1, r)) {
+            if (start >= 0 && start + 2 < n) {
+                if (board[start][c] == v &&
+                    board[start + 1][c] == v &&
+                    board[start + 2][c] == v
+                ) {
+                    return false
+                }
+            }
+        }
+        return true
     }
 
 }
