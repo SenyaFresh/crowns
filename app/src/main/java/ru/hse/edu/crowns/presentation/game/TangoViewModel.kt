@@ -6,12 +6,13 @@ import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.hse.edu.crowns.data.TangoHelper
 import ru.hse.edu.crowns.model.game.CellAction
+import ru.hse.edu.crowns.model.game.tango.TangoCell
 import ru.hse.edu.crowns.model.game.tango.TangoGameState
 import ru.hse.edu.crowns.presentation.GameViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class TangoViewModel @Inject constructor(): GameViewModel() {
+class TangoViewModel @Inject constructor() : GameViewModel() {
 
     var gameState by mutableStateOf(TangoGameState(emptyList(), emptyList(), emptyList()))
         private set
@@ -31,6 +32,55 @@ class TangoViewModel @Inject constructor(): GameViewModel() {
     }
 
     override fun onCellAction(action: CellAction) {
-        TODO("Not yet implemented")
+        gameState.startCells.find { it.position == action.position }
+            ?.let {
+                toaster.showToast("Нельзя изменять стартовые поля.")
+                return
+            }
+        gameState.playerCells.find { it.position == action.position }
+            .let { oldCell ->
+                when {
+                    oldCell == null -> {
+                        val cell = TangoCell(action.position, false)
+                        gameState = gameState.copy(
+                            playerCells = gameState.playerCells.plus(
+                                cell.copy(
+                                    isCorrect = TangoHelper.isValidMove(
+                                        cell,
+                                        gameState.playerCells + gameState.startCells,
+                                        gameState.conditions,
+                                        n
+                                    )
+                                )
+                            )
+                        )
+                    }
+                    !oldCell.isSun -> {
+                        gameState = gameState.copy(
+                            playerCells = gameState.playerCells.map {
+                                if (it.position == action.position) {
+                                    val cell = TangoCell(action.position, true)
+                                    cell.copy(
+                                        isCorrect = TangoHelper.isValidMove(
+                                            cell,
+                                            gameState.playerCells + gameState.startCells,
+                                            gameState.conditions,
+                                            n
+                                        )
+                                    )
+                                } else {
+                                    it
+                                }
+                            }
+                        )
+                    }
+                    else -> {
+                        gameState = gameState.copy(
+                            playerCells = gameState.playerCells.minus(oldCell)
+                        )
+                    }
+                }
+
+            }
     }
 }
