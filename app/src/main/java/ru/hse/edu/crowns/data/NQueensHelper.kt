@@ -2,8 +2,8 @@ package ru.hse.edu.crowns.data
 
 import ru.hse.edu.crowns.model.game.queens.NQueensGameState
 import ru.hse.edu.crowns.model.game.Position
-import ru.hse.edu.crowns.model.game.coloredqueens.ColoredQueensGameState
-import ru.hse.edu.crowns.model.game.coloredqueens.ColorsMap
+import ru.hse.edu.crowns.model.game.queens.coloredqueens.ColoredQueensGameState
+import ru.hse.edu.crowns.model.game.queens.coloredqueens.ColorsMap
 import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import kotlin.random.Random
 

@@ -19,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.crowns.model.game.GameType
 import ru.hse.edu.crowns.presentation.AllGamesScreen
-import ru.hse.edu.crowns.presentation.GameScreen
+import ru.hse.edu.crowns.presentation.game.GameScreen
 import ru.hse.edu.crowns.presentation.LoginScreen
 import ru.hse.edu.crowns.presentation.RegistrationScreen
 import ru.hse.edu.crowns.ui.theme.AppTheme

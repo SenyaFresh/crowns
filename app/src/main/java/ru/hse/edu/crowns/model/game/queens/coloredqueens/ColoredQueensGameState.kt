@@ -1,4 +1,4 @@
-package ru.hse.edu.crowns.model.game.coloredqueens
+package ru.hse.edu.crowns.model.game.queens.coloredqueens
 
 import ru.hse.edu.crowns.model.game.Cell
 import ru.hse.edu.crowns.model.game.queens.NQueensGameState

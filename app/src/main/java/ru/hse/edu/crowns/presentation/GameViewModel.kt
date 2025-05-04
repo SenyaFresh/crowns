@@ -1,10 +1,7 @@
-package ru.hse.edu.crowns.model.game
+package ru.hse.edu.crowns.presentation
 
 import ru.hse.edu.components.BaseViewModel
-import ru.hse.edu.crowns.data.NQueensHelper
-import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
-import ru.hse.edu.crowns.model.game.queens.CrossCell
-import ru.hse.edu.crowns.model.game.queens.WrongQueenCell
+import ru.hse.edu.crowns.model.game.CellAction
 
 
 abstract class GameViewModel: BaseViewModel() {

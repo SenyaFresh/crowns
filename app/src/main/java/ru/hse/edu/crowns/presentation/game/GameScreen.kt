@@ -1,4 +1,4 @@
-package ru.hse.edu.crowns.presentation
+package ru.hse.edu.crowns.presentation.game
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
