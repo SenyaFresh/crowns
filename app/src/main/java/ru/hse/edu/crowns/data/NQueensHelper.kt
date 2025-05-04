@@ -1,13 +1,20 @@
 package ru.hse.edu.crowns.data
 
+import ru.hse.edu.crowns.model.game.queens.NQueensGameState
 import ru.hse.edu.crowns.model.game.Position
+import ru.hse.edu.crowns.model.game.coloredqueens.ColoredQueensGameState
+import ru.hse.edu.crowns.model.game.coloredqueens.ColorsMap
+import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import kotlin.random.Random
 
 object NQueensHelper {
-
-    fun generateColoredLevel(n: Int): List<List<Int>> {
+    fun generateColoredLevel(n: Int, startCount: Int): ColoredQueensGameState {
         val positions = generateLevel(n)
-        if (positions.isEmpty()) return List(n) { List(n) { -1 } }
+        if (positions.isEmpty()) return ColoredQueensGameState(
+            emptyList(),
+            emptyList(),
+            emptyList()
+        )
 
         val board = MutableList(n) { MutableList(n) { -1 } }
         val territoryFrontiers = MutableList(n) { ArrayDeque<Position>() }
@@ -57,32 +64,25 @@ object NQueensHelper {
             }
         }
 
-        return board
+        return ColoredQueensGameState(
+            positions.shuffled().take(startCount).map { CorrectQueenCell(it) },
+            emptyList(),
+            board
+        )
+    }
+
+    fun isValidMoveForColored(move: Position, positions: List<Position>, colors: ColorsMap): Boolean {
+        if (!isValidMove(move, positions)) return false
+        val occupiedColors = positions.map { colors[it.row][it.column] }.toSet()
+        return !occupiedColors.contains(colors[move.row][move.column])
     }
 
 
-    fun generateDefaultLevel(n: Int, startCount: Int): List<Position> {
-        return generateLevel(n).shuffled().take(startCount)
-    }
-
-    private fun generateLevel(n: Int): List<Position> {
-        val positions = mutableListOf<Position>()
-
-        fun backtrack(row: Int): Boolean {
-            if (row == n) return true
-
-            val cols = (0 until n).toMutableList().also { it.shuffle(Random) }
-            for (col in cols) {
-                if (isValidMove(Position(row, col), positions)) {
-                    positions.add(Position(row, col))
-                    if (backtrack(row + 1)) return true
-                    positions.removeAt(positions.lastIndex)
-                }
-            }
-            return false
-        }
-
-        return if (backtrack(0)) positions else emptyList()
+    fun generateDefaultLevel(n: Int, startCount: Int): NQueensGameState {
+        return NQueensGameState(
+            generateLevel(n).shuffled().take(startCount)
+                .map { CorrectQueenCell(it) }, emptyList()
+        )
     }
 
     fun isValidMove(move: Position, positions: List<Position>): Boolean {
@@ -128,5 +128,26 @@ object NQueensHelper {
         }
 
         return backtrack(0)
+    }
+
+
+    private fun generateLevel(n: Int): List<Position> {
+        val positions = mutableListOf<Position>()
+
+        fun backtrack(row: Int): Boolean {
+            if (row == n) return true
+
+            val cols = (0 until n).toMutableList().also { it.shuffle(Random) }
+            for (col in cols) {
+                if (isValidMove(Position(row, col), positions)) {
+                    positions.add(Position(row, col))
+                    if (backtrack(row + 1)) return true
+                    positions.removeAt(positions.lastIndex)
+                }
+            }
+            return false
+        }
+
+        return if (backtrack(0)) positions else emptyList()
     }
 }

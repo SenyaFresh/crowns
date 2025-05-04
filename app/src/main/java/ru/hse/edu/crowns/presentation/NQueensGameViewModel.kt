@@ -4,10 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ru.hse.edu.components.BaseViewModel
 import ru.hse.edu.crowns.data.NQueensHelper
 import ru.hse.edu.crowns.model.game.CellAction
-import ru.hse.edu.crowns.model.game.GameState
+import ru.hse.edu.crowns.model.game.queens.NQueensGameState
+import ru.hse.edu.crowns.model.game.GameViewModel
 import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import ru.hse.edu.crowns.model.game.queens.CrossCell
@@ -15,24 +15,21 @@ import ru.hse.edu.crowns.model.game.queens.WrongQueenCell
 import javax.inject.Inject
 
 @HiltViewModel
-class GameViewModel @Inject constructor() : BaseViewModel() {
-    var gameState by mutableStateOf(GameState(emptyList(), emptyList()))
+class NQueensGameViewModel @Inject constructor() : GameViewModel() {
+    var gameState by mutableStateOf(NQueensGameState(emptyList(), emptyList()))
         private set
     private var n: Int = -1
 
-    fun generateLevel(n: Int, startCount: Int) {
+    override fun generateLevel(n: Int, startCount: Int) {
         this.n = n
-        gameState = GameState(
-            NQueensHelper.generateDefaultLevel(n, startCount)
-                .map { CorrectQueenCell(it) }, emptyList()
-        )
+        gameState = NQueensHelper.generateDefaultLevel(n, startCount)
     }
 
-    fun clearGameState() {
+    override fun clearGameState() {
         gameState = gameState.copy(playerCells = emptyList())
     }
 
-    fun getHint() {
+    override fun getHint() {
         val hint = NQueensHelper.generateHint(n, getQueensPositions())
         if (hint != null) {
             gameState = gameState.copy(
@@ -43,7 +40,7 @@ class GameViewModel @Inject constructor() : BaseViewModel() {
         }
     }
 
-    fun onCellAction(action: CellAction) {
+    override fun onCellAction(action: CellAction) {
         gameState.startCells.find { it.position == action.position }
             ?.let {
                 toaster.showToast("Нельзя изменять стартовые поля.")

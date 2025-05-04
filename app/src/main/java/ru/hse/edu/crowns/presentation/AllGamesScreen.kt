@@ -29,9 +29,10 @@ import androidx.compose.ui.unit.dp
 import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.components.presentation.GameCard
 import ru.hse.edu.crowns.R
+import ru.hse.edu.crowns.model.game.GameType
 
 @Composable
-fun AllGamesScreen(onGameClick: (Difficulty) -> Unit) {
+fun AllGamesScreen(onGameClick: (Difficulty, GameType) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,22 +79,22 @@ fun AllGamesScreen(onGameClick: (Difficulty) -> Unit) {
             GameCard(
                 title = "Queens",
                 gameIconPainter = painterResource(id = R.drawable.queens_green),
-                onPlayClick = onGameClick
+                onPlayClick = { difficulty -> onGameClick(difficulty, GameType.COLORED_QUEENS)}
             )
             GameCard(
                 title = "Killer Sudoku",
                 gameIconPainter = painterResource(id = R.drawable.killer_sudoku_green),
-                onPlayClick = onGameClick
+                onPlayClick = { difficulty -> onGameClick(difficulty, GameType.COLORED_QUEENS)}
             )
             GameCard(
                 title = "Tango",
                 gameIconPainter = painterResource(id = R.drawable.tango_green),
-                onPlayClick = onGameClick
+                onPlayClick = { difficulty -> onGameClick(difficulty, GameType.COLORED_QUEENS)}
             )
             GameCard(
                 title = "N Ферзей",
                 gameIconPainter = painterResource(id = R.drawable.n_queens_green),
-                onPlayClick = onGameClick
+                onPlayClick = { difficulty -> onGameClick(difficulty, GameType.N_QUEENS)}
             )
             Spacer(modifier = Modifier)
         }
@@ -103,5 +104,5 @@ fun AllGamesScreen(onGameClick: (Difficulty) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun AllGamesScreenPreview() {
-    AllGamesScreen { }
+    AllGamesScreen {_, _ -> }
 }

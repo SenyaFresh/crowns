@@ -49,6 +49,7 @@ import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.model.game.CellAction
+import ru.hse.edu.crowns.model.game.GameType
 import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import kotlin.time.Duration.Companion.seconds
@@ -57,10 +58,11 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun GameScreen(
     difficulty: Difficulty,
+    gameType: GameType,
     onExit: () -> Unit
 ) {
     var gameSessionState by remember { mutableStateOf(GameSessionState.GOING) }
-    val viewModel = hiltViewModel<GameViewModel>()
+    val viewModel = hiltViewModel<NQueensGameViewModel>()
 
     val configuration = LocalConfiguration.current
     val cellSize = remember(configuration) {
@@ -337,5 +339,5 @@ enum class GameSessionState {
 @Preview(showBackground = true)
 @Composable
 fun GameScreenPreview() {
-    GameScreen(Difficulty.Hard) {}
+    GameScreen(Difficulty.Hard, GameType.COLORED_QUEENS) {}
 }
