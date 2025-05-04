@@ -5,6 +5,7 @@ import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.queens.coloredqueens.ColoredQueensGameState
 import ru.hse.edu.crowns.model.game.queens.coloredqueens.ColorsMap
 import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
+import kotlin.math.abs
 import kotlin.random.Random
 
 object NQueensHelper {
@@ -104,8 +105,7 @@ object NQueensHelper {
         positions.forEach {
             if (it.row == move.row) return false
             if (it.column == move.column) return false
-            if (it.row - it.column == move.row - move.column) return false
-            if (it.row - it.column == move.row + move.column) return false
+            if (abs(it.row - move.row) == abs(it.column - move.column)) return false
         }
         return true
     }

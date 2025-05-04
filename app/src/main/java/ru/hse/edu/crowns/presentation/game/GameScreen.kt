@@ -102,7 +102,7 @@ fun GameScreen(
         }
     }
 
-    LaunchedEffect(viewModel.isWin) {
+    LaunchedEffect(viewModel.isWin.value) {
         if (viewModel.isWin.value && !showDialog) {
             gameSessionState = GameSessionState.WIN
             showDialog = true
@@ -230,7 +230,7 @@ fun GameScreen(
                                                 Spacer(
                                                     Modifier
                                                         .fillMaxSize()
-                                                        .background(Color.Gray.copy(alpha = 0.5f))
+                                                        .background(Color.Gray.copy(alpha = 0.25f))
                                                 )
                                                 it.content.invoke()
                                             }

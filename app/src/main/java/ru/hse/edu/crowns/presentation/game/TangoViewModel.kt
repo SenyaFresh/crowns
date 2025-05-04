@@ -15,8 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TangoViewModel @Inject constructor() : GameViewModel() {
 
-    override var isWin = mutableStateOf(false)
-        private set
+    override val isWin = mutableStateOf(false)
 
     var gameState by mutableStateOf(TangoGameState(emptyList(), emptyList(), emptyList()))
         private set
@@ -24,7 +23,7 @@ class TangoViewModel @Inject constructor() : GameViewModel() {
 
     override fun generateLevel(n: Int, startCount: Int) {
         this.n = n
-        gameState = TangoHelper.generateLevel(n, startCount)
+        gameState = TangoHelper.generateLevel(n, startCount * 4)
     }
 
     override fun clearGameState() {
@@ -45,17 +44,9 @@ class TangoViewModel @Inject constructor() : GameViewModel() {
             .let { oldCell ->
                 when {
                     oldCell == null -> {
-                        val cell = TangoCell(action.position, false)
                         gameState = gameState.copy(
                             playerCells = gameState.playerCells.plus(
-                                cell.copy(
-                                    isCorrect = TangoHelper.isValidMove(
-                                        cell,
-                                        gameState.playerCells + gameState.startCells,
-                                        gameState.conditions,
-                                        n
-                                    )
-                                )
+                                TangoCell(action.position, false)
                             )
                         )
                     }
@@ -64,15 +55,7 @@ class TangoViewModel @Inject constructor() : GameViewModel() {
                         gameState = gameState.copy(
                             playerCells = gameState.playerCells.map {
                                 if (it.position == action.position) {
-                                    val cell = TangoCell(action.position, true)
-                                    cell.copy(
-                                        isCorrect = TangoHelper.isValidMove(
-                                            cell,
-                                            gameState.playerCells + gameState.startCells,
-                                            gameState.conditions,
-                                            n
-                                        )
-                                    )
+                                    TangoCell(action.position, true)
                                 } else {
                                     it
                                 }
@@ -87,6 +70,19 @@ class TangoViewModel @Inject constructor() : GameViewModel() {
                     }
                 }
             }
+
+        gameState = gameState.copy(
+            playerCells = gameState.playerCells.map {
+                it.copy(
+                    isCorrect = TangoHelper.isValidMove(
+                        it,
+                        gameState.playerCells + gameState.startCells,
+                        gameState.conditions,
+                        n
+                    )
+                )
+            }
+        )
 
         if (gameState.playerCells.filter { it.isCorrect }.size == n * n - gameState.startCells.size) {
             isWin.value = true

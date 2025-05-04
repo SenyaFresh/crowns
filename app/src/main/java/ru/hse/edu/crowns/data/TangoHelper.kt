@@ -84,7 +84,7 @@ object TangoHelper {
                 neighborRow in 0 until n && neighborColumn in 0 until n
             }
 
-        while (conditions.size < n) {
+        while (conditions.size < n * 3 / 2) {
             val row = Random.nextInt(n)
             val column = Random.nextInt(n)
             val pos = Position(row, column)
@@ -162,17 +162,9 @@ object TangoHelper {
             }
         }
 
-        if ((0 until n)
-                .map { iterC -> cells.any { it.position.row == r && it.position.column == iterC && it.isSun == move.isSun } }
-                .count { true } == n / 2) {
-            return false
-        }
+        if (cells.count { it.position.column == c  && it.isSun == move.isSun} > n / 2) return false
 
-        if ((0 until n)
-                .map { iterR -> cells.any { it.position.row == iterR && it.position.column == c && it.isSun == move.isSun } }
-                .count { true } == n / 2) {
-            return false
-        }
+        if (cells.count { it.position.row == r  && it.isSun == move.isSun} > n / 2) return false
 
         return true
     }

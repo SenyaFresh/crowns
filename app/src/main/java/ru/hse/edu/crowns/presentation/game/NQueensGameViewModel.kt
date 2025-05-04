@@ -16,8 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NQueensGameViewModel @Inject constructor() : GameViewModel() {
-    override var isWin = mutableStateOf(false)
-        private set
+    override val isWin = mutableStateOf(false)
 
     var gameState by mutableStateOf(NQueensGameState(emptyList(), emptyList()))
         private set

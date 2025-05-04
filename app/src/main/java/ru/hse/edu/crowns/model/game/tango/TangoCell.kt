@@ -1,13 +1,10 @@
 package ru.hse.edu.crowns.model.game.tango
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ModeNight
-import androidx.compose.material.icons.filled.WbSunny
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import ru.hse.edu.crowns.R
@@ -21,14 +18,12 @@ data class TangoCell(
 ) : Cell(
     position,
     content = {
-        Icon(
-            modifier = Modifier.fillMaxSize(0.8f),
-            imageVector = if (isSun) Icons.Filled.WbSunny
-            else Icons.Filled.ModeNight,
+        Image(
+            modifier = Modifier.fillMaxSize(if (isSun) 0.9f else 0.8f),
+            imageVector = if (isSun) ImageVector.vectorResource(R.drawable.sun_icon)
+            else ImageVector.vectorResource(R.drawable.moon_icon),
             contentDescription = null,
-            tint = if (!isCorrect) MaterialTheme.colorScheme.error
-            else if (!isSun) Color(0xFF1855aa)
-            else Color(0xFFffb31e)
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.error).takeIf { !isCorrect }
         )
     }
 )
