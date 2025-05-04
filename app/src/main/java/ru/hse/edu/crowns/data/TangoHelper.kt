@@ -154,9 +154,9 @@ object TangoHelper {
         }
 
         for (start in listOf(r - 2, r - 1, r)) {
-            if (cells.firstOrNull { it.position.row == start && it.position.column == r }?.isSun == move.isSun &&
-                cells.firstOrNull { it.position.row == start + 1 && it.position.column == r }?.isSun == move.isSun &&
-                cells.firstOrNull { it.position.row == start + 2 && it.position.column == r }?.isSun == move.isSun
+            if (cells.firstOrNull { it.position.row == start && it.position.column == c }?.isSun == move.isSun &&
+                cells.firstOrNull { it.position.row == start + 1 && it.position.column == c }?.isSun == move.isSun &&
+                cells.firstOrNull { it.position.row == start + 2 && it.position.column == c }?.isSun == move.isSun
             ) {
                 return false
             }
