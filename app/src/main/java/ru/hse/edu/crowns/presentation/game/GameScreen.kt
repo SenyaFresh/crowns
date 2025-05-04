@@ -64,7 +64,8 @@ fun GameScreen(
     var gameSessionState by remember { mutableStateOf(GameSessionState.GOING) }
     val viewModel = when (gameType) {
         GameType.COLORED_QUEENS -> hiltViewModel<ColoredQueensViewModel>()
-        else -> hiltViewModel<ColoredQueensViewModel>()
+        GameType.TANGO -> hiltViewModel<TangoViewModel>()
+        else -> hiltViewModel<NQueensGameViewModel>()
     }
 
     val configuration = LocalConfiguration.current
@@ -96,10 +97,8 @@ fun GameScreen(
         }
     }
 
-    LaunchedEffect(viewModel.gameState.playerCells) {
-        if (viewModel.gameState.playerCells.filterIsInstance<CorrectQueenCell>().size == difficulty.n - difficulty.startCount
-            && !showDialog
-        ) {
+    LaunchedEffect(viewModel.isWin) {
+        if (viewModel.isWin.value && !showDialog) {
             gameSessionState = GameSessionState.WIN
             showDialog = true
         }
@@ -189,26 +188,45 @@ fun GameScreen(
                                 .clickable { viewModel.onCellAction(CellAction(position)) },
                             contentAlignment = Alignment.Center
                         ) {
-                            if (gameType == GameType.COLORED_QUEENS) {
-                                Spacer(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(if (viewModel.gameState.colors.isEmpty()) Color.Transparent
-                                        else colorsList[viewModel.gameState.colors[row][column]])
-                                )
-                            }
-                            viewModel.gameState.startCells.find { it.position == position }
-                                ?.let {
-                                    if (gameType == GameType.N_QUEENS) {
-                                        Spacer(
-                                            Modifier
-                                                .fillMaxSize()
-                                                .background(Color.Gray.copy(alpha = 0.5f))
-                                        )
-                                    }
-                                    it.content.invoke()
+                            when (viewModel) {
+                                is ColoredQueensViewModel -> {
+                                    Spacer(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(
+                                                if (viewModel.gameState.colors.isEmpty()) Color.Transparent
+                                                else colorsList[viewModel.gameState.colors[row][column]]
+                                            )
+                                    )
+                                    viewModel.gameState.startCells.find { it.position == position }?.content?.invoke()
+                                        ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
                                 }
-                                ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
+
+                                is NQueensGameViewModel -> {
+                                    viewModel.gameState.startCells.find { it.position == position }
+                                        ?.let {
+                                            Spacer(
+                                                Modifier
+                                                    .fillMaxSize()
+                                                    .background(Color.Gray.copy(alpha = 0.5f))
+                                            )
+                                            it.content.invoke()
+                                        }
+                                        ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
+                                }
+                                is TangoViewModel -> {
+                                    viewModel.gameState.startCells.find { it.position == position }
+                                        ?.let {
+                                            Spacer(
+                                                Modifier
+                                                    .fillMaxSize()
+                                                    .background(Color.Gray.copy(alpha = 0.5f))
+                                            )
+                                            it.content.invoke()
+                                        }
+                                        ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
+                                }
+                            }
                         }
                     }
                 }
@@ -243,13 +261,22 @@ fun GameScreen(
 
         val howToPlayText = remember(gameType) {
             when (gameType) {
-                GameType.COLORED_QUEENS -> "1. Ваша цель – обеспечить наличие только одного ферзя в каждой строке, столбце, диагонали и цветовой области.\n" +
-                        "2. Коснитесь один раз, чтобы разместить X, и два раза, чтобы разместить Ферзя. Используйте X, чтобы отмечать места, в которых нельзя разместить Ферзя.\n" +
-                        "3. Два Ферзя не могут касаться друг друга, даже по диагонали."
+                GameType.COLORED_QUEENS ->
+                    "1. Ваша цель – обеспечить наличие только одного ферзя в каждой строке, столбце, диагонали и цветовой области.\n" +
+                            "2. Коснитесь один раз, чтобы разместить X, и два раза, чтобы разместить Ферзя. Используйте X, чтобы отмечать места, в которых нельзя разместить Ферзя.\n" +
+                            "3. Два Ферзя не могут касаться друг друга, даже по диагонали."
 
-                else -> "1. Ваша цель – обеспечить наличие только одного ферзя в каждой строке, столбце и диагонали.\n" +
-                    "2. Коснитесь один раз, чтобы разместить X, и два раза, чтобы разместить Ферзя. Используйте X, чтобы отмечать места, в которых нельзя разместить Ферзя.\n" +
-                    "3. Два Ферзя не могут касаться друг друга, даже по диагонали."
+                GameType.TANGO ->
+                    "1. Заполните сетку так, чтобы каждая клетка содержала либо Луну, либо Солнце.\n" +
+                            "2. Рядом друг с другом могут находиться не более 2 Лун или Солнц ,как по вертикали, так и по горизонтали.\n" +
+                            "3. Каждая строка (и столбец) должна содержать одинаковое количество Лун и Солнц.\n" +
+                            "4. Клетки, разделенные знаком =, должны быть одного типа.\n" +
+                            "5. Клетки, разделенные знаком X, должны быть противоположного типа."
+
+                else ->
+                    "1. Ваша цель – обеспечить наличие только одного ферзя в каждой строке, столбце и диагонали.\n" +
+                            "2. Коснитесь один раз, чтобы разместить X, и два раза, чтобы разместить Ферзя. Используйте X, чтобы отмечать места, в которых нельзя разместить Ферзя.\n" +
+                            "3. Два Ферзя не могут касаться друг друга, даже по диагонали."
             }
         }
 

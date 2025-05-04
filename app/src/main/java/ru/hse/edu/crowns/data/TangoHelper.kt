@@ -29,7 +29,7 @@ object TangoHelper {
             }
         }
 
-        repeat(1_000_000) {
+        repeat(10_000) {
             val firstRow = Random.nextInt(n)
             var secondRow = Random.nextInt(n)
             if (firstRow == secondRow) {

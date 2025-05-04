@@ -1,5 +1,7 @@
 package ru.hse.edu.crowns.presentation.game
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,11 +10,13 @@ import ru.hse.edu.crowns.data.TangoHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.tango.TangoCell
 import ru.hse.edu.crowns.model.game.tango.TangoGameState
-import ru.hse.edu.crowns.presentation.GameViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class TangoViewModel @Inject constructor() : GameViewModel() {
+
+    override var isWin = mutableStateOf(false)
+        private set
 
     var gameState by mutableStateOf(TangoGameState(emptyList(), emptyList(), emptyList()))
         private set
@@ -55,6 +59,7 @@ class TangoViewModel @Inject constructor() : GameViewModel() {
                             )
                         )
                     }
+
                     !oldCell.isSun -> {
                         gameState = gameState.copy(
                             playerCells = gameState.playerCells.map {
@@ -74,13 +79,18 @@ class TangoViewModel @Inject constructor() : GameViewModel() {
                             }
                         )
                     }
+
                     else -> {
                         gameState = gameState.copy(
                             playerCells = gameState.playerCells.minus(oldCell)
                         )
                     }
                 }
-
             }
+
+        if (gameState.playerCells.filter { it.isCorrect }.size == n * n - gameState.startCells.size) {
+            isWin.value = true
+        }
+
     }
 }

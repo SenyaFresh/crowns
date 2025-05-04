@@ -8,7 +8,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.hse.edu.crowns.data.NQueensHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.queens.NQueensGameState
-import ru.hse.edu.crowns.presentation.GameViewModel
 import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import ru.hse.edu.crowns.model.game.queens.CrossCell
@@ -17,6 +16,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NQueensGameViewModel @Inject constructor() : GameViewModel() {
+    override var isWin = mutableStateOf(false)
+        private set
+
     var gameState by mutableStateOf(NQueensGameState(emptyList(), emptyList()))
         private set
     private var n: Int = -1
@@ -86,6 +88,9 @@ class NQueensGameViewModel @Inject constructor() : GameViewModel() {
                     }
                 }
             }
+        if (gameState.playerCells.filterIsInstance<CorrectQueenCell>().size == n - gameState.startCells.size) {
+            isWin.value = true
+        }
     }
 
     private fun getQueensPositions(): List<Position> {

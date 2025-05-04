@@ -89,7 +89,7 @@ fun AllGamesScreen(onGameClick: (Difficulty, GameType) -> Unit) {
             GameCard(
                 title = "Tango",
                 gameIconPainter = painterResource(id = R.drawable.tango_green),
-                onPlayClick = { difficulty -> onGameClick(difficulty, GameType.COLORED_QUEENS)}
+                onPlayClick = { difficulty -> onGameClick(difficulty, GameType.TANGO)}
             )
             GameCard(
                 title = "N Ферзей",
