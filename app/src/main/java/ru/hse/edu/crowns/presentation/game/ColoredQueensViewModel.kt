@@ -6,11 +6,11 @@ import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.hse.edu.crowns.data.NQueensHelper
 import ru.hse.edu.crowns.model.game.CellAction
-import ru.hse.edu.crowns.model.game.queens.coloredqueens.ColoredQueensGameState
 import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import ru.hse.edu.crowns.model.game.queens.CrossCell
 import ru.hse.edu.crowns.model.game.queens.WrongQueenCell
+import ru.hse.edu.crowns.model.game.queens.coloredqueens.ColoredQueensGameState
 import javax.inject.Inject
 
 @HiltViewModel

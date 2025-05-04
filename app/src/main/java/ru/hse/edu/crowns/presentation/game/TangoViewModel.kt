@@ -1,15 +1,11 @@
 package ru.hse.edu.crowns.presentation.game
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ru.hse.edu.crowns.data.NQueensHelper
 import ru.hse.edu.crowns.data.TangoHelper
 import ru.hse.edu.crowns.model.game.CellAction
-import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import ru.hse.edu.crowns.model.game.tango.TangoCell
 import ru.hse.edu.crowns.model.game.tango.TangoGameState
 import javax.inject.Inject

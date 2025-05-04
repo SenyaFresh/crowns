@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DragHandle
@@ -56,7 +55,6 @@ import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.GameType
 import ru.hse.edu.crowns.model.game.Position
-import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -1,7 +1,6 @@
 package ru.hse.edu.crowns
 
 import kotlinx.serialization.Serializable
-import ru.hse.edu.crowns.model.game.GameType
 
 @Serializable
 data object AuthGraph {

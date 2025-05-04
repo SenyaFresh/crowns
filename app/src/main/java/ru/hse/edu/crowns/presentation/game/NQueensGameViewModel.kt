@@ -7,10 +7,10 @@ import androidx.compose.ui.graphics.Color
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.hse.edu.crowns.data.NQueensHelper
 import ru.hse.edu.crowns.model.game.CellAction
-import ru.hse.edu.crowns.model.game.queens.NQueensGameState
 import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import ru.hse.edu.crowns.model.game.queens.CrossCell
+import ru.hse.edu.crowns.model.game.queens.NQueensGameState
 import ru.hse.edu.crowns.model.game.queens.WrongQueenCell
 import javax.inject.Inject
 
