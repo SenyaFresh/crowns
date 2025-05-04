@@ -8,11 +8,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import ru.hse.edu.crowns.R
 import ru.hse.edu.crowns.model.game.Cell
+import ru.hse.edu.crowns.model.game.Position
 
-data class CorrectQueenCell(override val row: Int, override val column: Int) :
+data class CorrectQueenCell(override val position: Position) :
     Cell(
-        row,
-        column,
+        position,
         content = {
             Icon(
                 modifier = Modifier.fillMaxSize(0.8f),

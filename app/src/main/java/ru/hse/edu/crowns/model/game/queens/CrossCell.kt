@@ -7,11 +7,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import ru.hse.edu.crowns.model.game.Cell
+import ru.hse.edu.crowns.model.game.Position
 
-data class CrossCell(override val row: Int, override val column: Int) :
+data class CrossCell(override val position: Position) :
     Cell(
-        row,
-        column,
+        position,
         content = {
             Icon(
                 modifier = Modifier.fillMaxSize(0.4f),

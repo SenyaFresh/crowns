@@ -49,6 +49,7 @@ import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.model.game.CellAction
+import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import kotlin.time.Duration.Companion.seconds
 
@@ -175,14 +176,15 @@ fun GameScreen(
                     modifier = Modifier
                 ) {
                     repeat(difficulty.n) { column ->
+                        val position = Position(row, column)
                         Box(
                             modifier = Modifier
                                 .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant)
                                 .size(cellSize)
-                                .clickable { viewModel.onCellAction(CellAction(row, column)) },
+                                .clickable { viewModel.onCellAction(CellAction(position)) },
                             contentAlignment = Alignment.Center
                         ) {
-                            viewModel.gameState.startCells.find { it.row == row && it.column == column }
+                            viewModel.gameState.startCells.find { it.position == position }
                                 ?.let {
                                     Spacer(
                                         Modifier
@@ -191,7 +193,7 @@ fun GameScreen(
                                     )
                                     it.content.invoke()
                                 }
-                                ?: viewModel.gameState.playerCells.find { it.row == row && it.column == column }?.content?.invoke()
+                                ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
                         }
                     }
                 }

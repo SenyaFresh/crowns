@@ -8,6 +8,7 @@ import ru.hse.edu.components.BaseViewModel
 import ru.hse.edu.crowns.data.NQueensHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.GameState
+import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell
 import ru.hse.edu.crowns.model.game.queens.CrossCell
 import ru.hse.edu.crowns.model.game.queens.WrongQueenCell
@@ -23,7 +24,7 @@ class GameViewModel @Inject constructor() : BaseViewModel() {
         this.n = n
         gameState = GameState(
             NQueensHelper.generateDefaultLevel(n, startCount)
-                .map { CorrectQueenCell(it.first, it.second) }, emptyList()
+                .map { CorrectQueenCell(it) }, emptyList()
         )
     }
 
@@ -35,7 +36,7 @@ class GameViewModel @Inject constructor() : BaseViewModel() {
         val hint = NQueensHelper.generateHint(n, getQueensPositions())
         if (hint != null) {
             gameState = gameState.copy(
-                playerCells = gameState.playerCells.plus(CorrectQueenCell(hint.first, hint.second))
+                playerCells = gameState.playerCells.plus(CorrectQueenCell(hint))
             )
         } else {
             toaster.showToast("Подсказка: минимум один из ферзей стоит неправильно.")
@@ -43,21 +44,18 @@ class GameViewModel @Inject constructor() : BaseViewModel() {
     }
 
     fun onCellAction(action: CellAction) {
-        gameState.startCells.find { it.row == action.row && it.column == action.column }
+        gameState.startCells.find { it.position == action.position }
             ?.let {
                 toaster.showToast("Нельзя изменять стартовые поля.")
                 return
             }
-        gameState.playerCells.find { it.row == action.row && it.column == action.column }
+        gameState.playerCells.find { it.position == action.position }
             .let { oldCell ->
                 when (oldCell) {
                     null -> {
                         gameState = gameState.copy(
                             playerCells = gameState.playerCells.plus(
-                                CrossCell(
-                                    action.row,
-                                    action.column
-                                )
+                                CrossCell(action.position)
                             )
                         )
                     }
@@ -65,16 +63,15 @@ class GameViewModel @Inject constructor() : BaseViewModel() {
                     is CrossCell -> {
                         gameState = gameState.copy(
                             playerCells = gameState.playerCells.map {
-                                if (it.row == action.row && it.column == action.column) {
+                                if (it.position == action.position) {
                                     if (NQueensHelper.isValidMove(
-                                            action.row,
-                                            action.column,
+                                            action.position,
                                             getQueensPositions()
                                         )
                                     ) {
-                                        CorrectQueenCell(action.row, action.column)
+                                        CorrectQueenCell(action.position)
                                     } else {
-                                        WrongQueenCell(action.row, action.column)
+                                        WrongQueenCell(action.position)
                                     }
                                 } else {
                                     it
@@ -93,12 +90,12 @@ class GameViewModel @Inject constructor() : BaseViewModel() {
             }
     }
 
-    private fun getQueensPositions(): List<Pair<Int, Int>> {
+    private fun getQueensPositions(): List<Position> {
         return (gameState.playerCells + gameState.startCells)
             .filter { cell ->
                 cell is CorrectQueenCell || cell is WrongQueenCell
             }
-            .map { cell -> Pair(cell.row, cell.column) }
+            .map { it.position }
     }
 
 }
