@@ -25,7 +25,7 @@ class TangoViewModel @Inject constructor() : GameViewModel() {
 
     override fun generateLevel(n: Int, startCount: Int) {
         this.n = n
-        gameState = TangoHelper.generateLevel(n, startCount * 8)
+        gameState = TangoHelper.generateLevel(n, startCount * 10)
     }
 
     override fun clearGameState() {

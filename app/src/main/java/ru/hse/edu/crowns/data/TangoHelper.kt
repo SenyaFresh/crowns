@@ -85,7 +85,7 @@ object TangoHelper {
                 neighborRow in 0 until n && neighborColumn in 0 until n
             }
 
-        while (conditions.size < n * 2) {
+        while (conditions.size < n * 2.5) {
             val row = Random.nextInt(n)
             val column = Random.nextInt(n)
             val pos = Position(row, column)
