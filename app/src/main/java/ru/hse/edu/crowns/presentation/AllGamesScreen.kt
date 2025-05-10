@@ -84,7 +84,7 @@ fun AllGamesScreen(onGameClick: (Difficulty, GameType) -> Unit) {
             GameCard(
                 title = "Killer Sudoku",
                 gameIconPainter = painterResource(id = R.drawable.killer_sudoku_green),
-                onPlayClick = { difficulty -> onGameClick(difficulty, GameType.COLORED_QUEENS)}
+                onPlayClick = { difficulty -> onGameClick(difficulty, GameType.KILLER_SUDOKU)}
             )
             GameCard(
                 title = "Tango",

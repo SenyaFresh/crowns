@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,13 +68,16 @@ fun GameScreen(
     var gameSessionState by remember { mutableStateOf(GameSessionState.GOING) }
     val viewModel = when (gameType) {
         GameType.COLORED_QUEENS -> hiltViewModel<ColoredQueensViewModel>()
+        GameType.KILLER_SUDOKU -> hiltViewModel<KillerSudokuViewModel>()
         GameType.TANGO -> hiltViewModel<TangoViewModel>()
-        else -> hiltViewModel<NQueensGameViewModel>()
+        GameType.N_QUEENS -> hiltViewModel<NQueensGameViewModel>()
     }
+
+    val n = if (gameType == GameType.KILLER_SUDOKU) 9 else difficulty.n
 
     val configuration = LocalConfiguration.current
     val cellSize = remember(configuration) {
-        (configuration.screenWidthDp.dp - 32.dp) / difficulty.n
+        (configuration.screenWidthDp.dp - 32.dp) / n
     }
 
     var showDialog by remember { mutableStateOf(false) }
@@ -89,7 +93,7 @@ fun GameScreen(
     var tipsLeft by remember { mutableIntStateOf(difficulty.tips) }
 
     LaunchedEffect(Unit) {
-        viewModel.generateLevel(difficulty.n, difficulty.startCount)
+        viewModel.generateLevel(n, difficulty.startCount)
         while (timeLeft > 0 && gameSessionState != GameSessionState.WIN) {
             delay(1.seconds)
             timeLeft--
@@ -182,17 +186,20 @@ fun GameScreen(
                 )
         ) {
             Column {
-                repeat(difficulty.n) { row ->
+                repeat(n) { row ->
                     Row(
                         modifier = Modifier
                     ) {
-                        repeat(difficulty.n) { column ->
+                        repeat(n) { column ->
                             val position = Position(row, column)
                             Box(
                                 modifier = Modifier
                                     .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant)
                                     .size(cellSize)
-                                    .clickable { viewModel.onCellAction(CellAction(position)) },
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null
+                                    ) { viewModel.onCellAction(CellAction(position)) },
                                 contentAlignment = Alignment.Center
                             ) {
                                 when (viewModel) {
@@ -209,7 +216,7 @@ fun GameScreen(
                                             ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
                                     }
 
-                                    is NQueensGameViewModel -> {
+                                    is KillerSudokuViewModel -> {
                                         viewModel.gameState.startCells.find { it.position == position }
                                             ?.let {
                                                 Spacer(
@@ -229,6 +236,19 @@ fun GameScreen(
                                                     Modifier
                                                         .fillMaxSize()
                                                         .background(Color.Gray.copy(alpha = 0.25f))
+                                                )
+                                                it.content.invoke()
+                                            }
+                                            ?: viewModel.gameState.playerCells.find { it.position == position }?.content?.invoke()
+                                    }
+
+                                    is NQueensGameViewModel -> {
+                                        viewModel.gameState.startCells.find { it.position == position }
+                                            ?.let {
+                                                Spacer(
+                                                    Modifier
+                                                        .fillMaxSize()
+                                                        .background(Color.Gray.copy(alpha = 0.5f))
                                                 )
                                                 it.content.invoke()
                                             }
@@ -289,18 +309,22 @@ fun GameScreen(
                     "1. Ваша цель – обеспечить наличие только одного ферзя в каждой строке, столбце, диагонали и цветовой области.\n" +
                             "2. Коснитесь один раз, чтобы разместить X, и два раза, чтобы разместить Ферзя. Используйте X, чтобы отмечать места, в которых нельзя разместить Ферзя.\n" +
                             "3. Два Ферзя не могут касаться друг друга, даже по диагонали."
-
+                GameType.KILLER_SUDOKU ->
+                    "1. Заполните числами от 1 до 9 все строки, колонки и квадраты 3х3, как в классическом судоку.\n" +
+                            "2. Не забывайте о зонах сумм — наборах ячеек, выделенных пунктиром.\n" +
+                            "3. Сумма цифр в зоне сумм должна быть равна числу в левом верхнем углу этой зоны.\n" +
+                            "4. Внутри одной зоны сумм, строки, колонки или квадрата 3х3 каждое число можно использовать только один раз."
                 GameType.TANGO ->
                     "1. Заполните сетку так, чтобы каждая клетка содержала либо Луну, либо Солнце.\n" +
                             "2. Рядом друг с другом могут находиться не более 2 Лун или Солнц ,как по вертикали, так и по горизонтали.\n" +
                             "3. Каждая строка (и столбец) должна содержать одинаковое количество Лун и Солнц.\n" +
                             "4. Клетки, разделенные знаком =, должны быть одного типа.\n" +
                             "5. Клетки, разделенные знаком X, должны быть противоположного типа."
-
-                else ->
+                GameType.N_QUEENS ->
                     "1. Ваша цель – обеспечить наличие только одного ферзя в каждой строке, столбце и диагонали.\n" +
                             "2. Коснитесь один раз, чтобы разместить X, и два раза, чтобы разместить Ферзя. Используйте X, чтобы отмечать места, в которых нельзя разместить Ферзя.\n" +
                             "3. Два Ферзя не могут касаться друг друга, даже по диагонали."
+
             }
         }
 

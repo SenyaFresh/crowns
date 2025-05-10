@@ -8,98 +8,92 @@ import kotlin.random.Random
 object KillerSudokuHelper {
 
     private const val SIZE = 9
-    private const val EMPTY = 0
-    private const val ZONE_COUNT = 30
+    private const val BACKTRACK_EMPTY = -1 // для заполнения решения
+    private const val MAX_ZONE_SIZE = 4
 
-    fun generateLevel(startCount: Int): SudokuGameState {
-        val random = Random
+    private var lastGeneratedGrid: Array<IntArray>? = null
 
-        val solution = Array(SIZE) { IntArray(SIZE) { EMPTY } }
+    fun generateLevel(startCount: Int, seed: Long = System.currentTimeMillis()): SudokuGameState {
+        val random = Random(seed)
+
+        // 1) Сгенерировать полное решение классического судоку
+        val solution = Array(SIZE) { IntArray(SIZE) { BACKTRACK_EMPTY } }
         fillGrid(solution, random)
 
+        lastGeneratedGrid = solution.copyOf().map { it.copyOf() }.toTypedArray()
+
+        // 2) Разбить поле на зоны (каджи) с max размером 4
         val zoneBoard = Array(SIZE) { IntArray(SIZE) { -1 } }
-        val territoryFrontiers = List(ZONE_COUNT) { ArrayDeque<Position>() }
-        val allPositions = mutableListOf<Position>()
-        for (r in 0 until SIZE) for (c in 0 until SIZE) allPositions += Position(r, c)
-        allPositions.shuffle(random)
-        for (zone in 0 until ZONE_COUNT) {
-            val pos = allPositions.removeAt(0)
-            zoneBoard[pos.row][pos.column] = zone
-            territoryFrontiers[zone].add(pos)
+        val zones = mutableListOf<MutableList<Position>>()
+        val unassigned = ArrayDeque<Position>().apply {
+            for (r in 0 until SIZE) for (c in 0 until SIZE) add(Position(r, c))
         }
-        var unfilled = SIZE * SIZE - ZONE_COUNT
+        val directions = listOf(
+            Position(-1, 0), Position(1, 0), Position(0, -1), Position(0, 1)
+        )
 
-        fun freeNeighbors(p: Position): List<Position> {
-            return listOf(
-                Position(p.row - 1, p.column),
-                Position(p.row + 1, p.column),
-                Position(p.row, p.column - 1),
-                Position(p.row, p.column + 1)
-            ).filter { it.row in 0 until SIZE && it.column in 0 until SIZE && zoneBoard[it.row][it.column] == -1 }
-        }
+        while (unassigned.isNotEmpty()) {
+            val start = unassigned.random(random).also { unassigned.remove(it) }
+            val zoneIndex = zones.size
+            val zone = mutableListOf(start)
+            zoneBoard[start.row][start.column] = zoneIndex
 
-        while (unfilled > 0) {
-            val active = territoryFrontiers.mapIndexedNotNull { idx, dq ->
-                    if (dq.any { freeNeighbors(it).isNotEmpty() }) idx else null
-                }.shuffled(random)
-            for (zone in active) {
-                if (unfilled == 0) break
-                val dq = territoryFrontiers[zone]
-                repeat(dq.size) {
-                    val p = dq.removeFirst()
-                    val neigh = freeNeighbors(p)
-                    if (neigh.isNotEmpty()) {
-                        val nb = neigh.random(random)
-                        zoneBoard[nb.row][nb.column] = zone
-                        dq.addLast(nb)
-                        if (freeNeighbors(p).isNotEmpty()) {
-                            dq.addLast(p)
+            val frontier = ArrayDeque<Position>().apply { add(start) }
+            while (frontier.isNotEmpty() && zone.size < MAX_ZONE_SIZE) {
+                val p = frontier.removeFirst()
+                val usedNums = zone.map { solution[it.row][it.column] }.toSet()
+                val candidates =
+                    directions.map { d -> Position(p.row + d.row, p.column + d.column) }
+                        .filter { n ->
+                            n.row in 0 until SIZE && n.column in 0 until SIZE
+                                    && zoneBoard[n.row][n.column] == -1
+                                    && unassigned.contains(n)
+                                    && solution[n.row][n.column] !in usedNums
                         }
-                        unfilled--
-                        return@repeat
-                    }
-                }
+                if (candidates.isEmpty()) continue
+                val next = candidates.random(random)
+                zone.add(next)
+                zoneBoard[next.row][next.column] = zoneIndex
+                unassigned.remove(next)
+                frontier.add(next)
             }
+            zones += zone
         }
 
-        val zones = MutableList(ZONE_COUNT) { mutableListOf<Position>() }
-        for (r in 0 until SIZE) for (c in 0 until SIZE) {
-            zones[zoneBoard[r][c]].add(Position(r, c))
-        }
-        val sumsMap = zones.map { cage ->
+        // 3) Построить SumsMap: сумма -> список зон (плоских индексов)
+        val sumsMap = zones
+            .map { cage ->
                 val sum = cage.sumOf { solution[it.row][it.column] }
                 val flat = cage.map { it.row * SIZE + it.column }
                 sum to flat
-            }.groupBy({ it.first }, { it.second })
+            }
+            .groupBy({ it.first }, { it.second })
 
-        val coords = (0 until SIZE * SIZE).toMutableList().shuffled(random)
-        val openSet = coords.take(startCount).toSet()
+        // 4) Выбрать startCount предзаполненных ячеек (остальные не возвращаем)
+        val indices = (0 until SIZE * SIZE).shuffled(random)
+        val openSet = indices.take(startCount).toSet()
         val startCells = mutableListOf<SudokuCell>()
-        val playerCells = mutableListOf<SudokuCell>()
         for (r in 0 until SIZE) for (c in 0 until SIZE) {
-            val pos = Position(r, c)
             val idx = r * SIZE + c
             if (idx in openSet) {
-                startCells += SudokuCell(pos, solution[r][c], true)
-            } else {
-                playerCells += SudokuCell(pos, EMPTY, true)
+                startCells += SudokuCell(Position(r, c), solution[r][c], true)
             }
         }
 
-        return SudokuGameState(startCells, playerCells, sumsMap)
+        // Не возвращаем пустые ячейки, список playerCells остаётся пустым
+        return SudokuGameState(startCells, emptyList(), sumsMap)
     }
 
     private fun fillGrid(grid: Array<IntArray>, random: Random): Boolean {
         for (r in 0 until SIZE) for (c in 0 until SIZE) {
-            if (grid[r][c] == EMPTY) {
-                val nums = (1..SIZE).shuffled(random)
-                for (n in nums) {
+            if (grid[r][c] == BACKTRACK_EMPTY) {
+                for (n in (1..SIZE).shuffled(random)) {
                     if (isValid(grid, r, c, n)) {
                         grid[r][c] = n
                         if (fillGrid(grid, random)) return true
                     }
                 }
-                grid[r][c] = EMPTY
+                grid[r][c] = BACKTRACK_EMPTY
                 return false
             }
         }
@@ -116,5 +110,16 @@ object KillerSudokuHelper {
             if (grid[r][c] == num) return false
         }
         return true
+    }
+
+    fun generateHint(cells: List<SudokuCell>): SudokuCell? {
+        (0 until SIZE).shuffled().forEach { row ->
+            (0 until SIZE).shuffled().forEach { column ->
+                if (cells.none { it.position == Position(row, column) }) {
+                    return SudokuCell(Position(row, column), lastGeneratedGrid!![row][column], true)
+                }
+            }
+        }
+        return null
     }
 }
