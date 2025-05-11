@@ -32,6 +32,7 @@ import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.data.AccountsHelper.KEY_EMAIL
 import ru.hse.edu.crowns.data.AccountsHelper.KEY_MONEY
 import ru.hse.edu.crowns.data.AccountsHelper.KEY_NICKNAME
+import ru.hse.edu.crowns.data.AccountsHelper.KEY_SCORE
 import ru.hse.edu.crowns.data.AccountsHelper.USERS_COLLECTION
 import ru.hse.edu.crowns.ui.theme.AppTheme
 
@@ -92,7 +93,8 @@ fun RegistrationScreen(
                         val firestoreSignUpData = hashMapOf(
                             KEY_EMAIL to email,
                             KEY_NICKNAME to nickname,
-                            KEY_MONEY to 0L
+                            KEY_MONEY to 0L,
+                            KEY_SCORE to 0L,
                         )
                         Firebase.firestore.collection(USERS_COLLECTION)
                             .document(authResultTask.result.user!!.uid)

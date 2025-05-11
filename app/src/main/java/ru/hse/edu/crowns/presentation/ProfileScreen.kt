@@ -301,7 +301,10 @@ fun ProfileScreen(
                         leaders.forEach {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.height(IntrinsicSize.Min)
+                                modifier = Modifier.height(IntrinsicSize.Min).border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             ) {
                                 Text(
                                     text = it.position.toString(),

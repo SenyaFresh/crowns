@@ -49,7 +49,7 @@ object AccountsHelper {
             Firebase.firestore.collection(USERS_COLLECTION)
                 .orderBy(KEY_SCORE)
                 .get().addOnSuccessListener {
-                    it.documents.take(10).mapIndexed { index, documentSnapshot ->
+                    it.documents.take(10).reversed().mapIndexed { index, documentSnapshot ->
                         leaders.add(
                             LeaderTableEntity(
                                 index + 1,
