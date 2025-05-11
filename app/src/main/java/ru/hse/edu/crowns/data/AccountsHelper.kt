@@ -29,10 +29,9 @@ object AccountsHelper {
     fun updateMoney(money: Long) {
         Firebase.firestore.collection(USERS_COLLECTION).document(Firebase.auth.currentUser!!.uid)
             .get().addOnSuccessListener {
-                if (it.getLong(KEY_MONEY) == null)
-                    Firebase.firestore.collection(USERS_COLLECTION)
-                        .document(Firebase.auth.currentUser!!.uid)
-                        .update(KEY_MONEY, (it.getLong(KEY_MONEY) ?: 0) + money)
+                Firebase.firestore.collection(USERS_COLLECTION)
+                    .document(Firebase.auth.currentUser!!.uid)
+                    .update(KEY_MONEY, (it.getLong(KEY_MONEY) ?: 0) + money)
             }
     }
 
