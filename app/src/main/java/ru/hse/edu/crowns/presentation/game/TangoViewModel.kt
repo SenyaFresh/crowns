@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.crowns.data.TangoHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.tango.TangoCell
@@ -19,9 +20,9 @@ class TangoViewModel @Inject constructor() : GameViewModel() {
         private set
     private var n: Int = -1
 
-    override fun generateLevel(n: Int, startCount: Int) {
+    override fun generateLevel(n: Int, difficulty: Difficulty) {
         this.n = n
-        gameState = TangoHelper.generateLevel(n, startCount * 10)
+        gameState = TangoHelper.generateLevel(n, difficulty.startCount * 10)
     }
 
     override fun clearGameState() {

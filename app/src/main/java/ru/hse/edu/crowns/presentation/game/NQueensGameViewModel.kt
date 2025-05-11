@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.crowns.data.NQueensHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.Position
@@ -22,9 +23,9 @@ class NQueensGameViewModel @Inject constructor() : GameViewModel() {
         private set
     private var n: Int = -1
 
-    override fun generateLevel(n: Int, startCount: Int) {
+    override fun generateLevel(n: Int, difficulty: Difficulty) {
         this.n = n
-        gameState = NQueensHelper.generateDefaultLevel(n, startCount)
+        gameState = NQueensHelper.generateDefaultLevel(n, difficulty.startCount)
     }
 
     override fun clearGameState() {

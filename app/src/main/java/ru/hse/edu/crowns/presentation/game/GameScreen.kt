@@ -100,11 +100,11 @@ fun GameScreen(
 
     var number by remember { mutableIntStateOf(0) }
 
-    var timeLeft by remember { mutableIntStateOf(difficulty.time) }
+    var timeLeft by remember { mutableIntStateOf(difficulty.time * if (gameType == GameType.KILLER_SUDOKU) 2 else 1) }
     var tipsLeft by remember { mutableIntStateOf(difficulty.tips) }
 
     LaunchedEffect(Unit) {
-        viewModel.generateLevel(n, difficulty.startCount)
+        viewModel.generateLevel(n, difficulty)
         while (timeLeft > 0 && gameSessionState != GameSessionState.WIN) {
             delay(1.seconds)
             timeLeft--

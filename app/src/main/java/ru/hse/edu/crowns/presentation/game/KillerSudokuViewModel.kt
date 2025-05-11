@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.crowns.data.KillerSudokuHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.sudoku.SudokuCell
@@ -19,8 +20,14 @@ class KillerSudokuViewModel @Inject constructor() : GameViewModel() {
     var gameState by mutableStateOf(SudokuGameState(emptyList(), emptyList(), emptyList()))
         private set
 
-    override fun generateLevel(n: Int, startCount: Int) {
-        gameState = KillerSudokuHelper.generateLevel(startCount * 20)
+    override fun generateLevel(n: Int, difficulty: Difficulty) {
+        gameState = KillerSudokuHelper.generateLevel(
+            when (difficulty) {
+                Difficulty.Easy -> 45
+                Difficulty.Medium -> 35
+                Difficulty.Hard -> 20
+            }
+        )
     }
 
     override fun clearGameState() {
