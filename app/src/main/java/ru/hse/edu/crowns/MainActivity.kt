@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,6 +20,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import dagger.hilt.android.AndroidEntryPoint
 import ru.hse.edu.components.presentation.Difficulty
+import ru.hse.edu.crowns.data.AccountsHelper
 import ru.hse.edu.crowns.model.game.GameType
 import ru.hse.edu.crowns.presentation.AllGamesScreen
 import ru.hse.edu.crowns.presentation.LoginScreen
@@ -33,6 +35,21 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            LaunchedEffect(Unit) {
+                AccountsHelper.getUsername()
+            }
+            LaunchedEffect(Unit) {
+                AccountsHelper.getMoney()
+            }
+            LaunchedEffect(Unit) {
+                AccountsHelper.getLeaders()
+            }
+            LaunchedEffect(Unit) {
+                AccountsHelper.getAvailableBgs()
+            }
+            LaunchedEffect(Unit) {
+                AccountsHelper.getSelectedBg()
+            }
             AppTheme {
                 MainNavigation()
             }
