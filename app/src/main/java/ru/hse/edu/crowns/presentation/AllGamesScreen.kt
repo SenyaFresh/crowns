@@ -36,6 +36,7 @@ fun AllGamesScreen(onGameClick: (Difficulty, GameType) -> Unit, onNavigateToProf
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(top = 30.dp)
             .background(color = MaterialTheme.colorScheme.surface)
     ) {
         Row(

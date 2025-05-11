@@ -140,6 +140,7 @@ fun ProfileScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
+            .padding(top = 30.dp)
             .background(color = MaterialTheme.colorScheme.surface),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.Top)

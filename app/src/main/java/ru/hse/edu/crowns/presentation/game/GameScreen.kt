@@ -1,7 +1,9 @@
 package ru.hse.edu.crowns.presentation.game
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -46,8 +48,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -56,11 +63,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
+import ru.hse.edu.crowns.R
 import ru.hse.edu.crowns.data.AccountsHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.GameType
@@ -123,12 +132,32 @@ fun GameScreen(
         }
     }
 
+    var customBackground by remember { mutableStateOf(true) }
+
+    if (!customBackground) {
+        Spacer(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface))
+    } else {
+        val activity = LocalContext.current as Activity
+        WindowCompat.getInsetsController(
+            activity.window,
+            activity.window.decorView
+        ).apply {
+            isAppearanceLightStatusBars = false
+        }
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.space_bg),
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+
     // Таймер и подсказки.
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .background(color = MaterialTheme.colorScheme.surface),
+            .padding(top = 40.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
@@ -191,6 +220,7 @@ fun GameScreen(
                 .height(IntrinsicSize.Min)
                 .padding(vertical = 12.dp)
                 .clip(RoundedCornerShape(8.dp))
+                .background(color = MaterialTheme.colorScheme.surface)
                 .border(
                     2.dp,
                     MaterialTheme.colorScheme.onSurfaceVariant,

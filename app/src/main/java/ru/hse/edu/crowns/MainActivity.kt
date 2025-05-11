@@ -1,5 +1,6 @@
 package ru.hse.edu.crowns
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -51,7 +52,7 @@ fun MainNavigation() {
             exitTransition = { fadeOut(tween(200)) },
             popEnterTransition = { fadeIn(tween(200)) },
             popExitTransition = { fadeOut(tween(200)) },
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
         ) {
             navigation<AuthGraph>(
                 startDestination = AuthGraph.LoginScreen,
