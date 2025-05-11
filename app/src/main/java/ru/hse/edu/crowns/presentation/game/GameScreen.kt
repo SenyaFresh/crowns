@@ -132,9 +132,7 @@ fun GameScreen(
         }
     }
 
-    var customBackground by remember { mutableStateOf(true) }
-
-    if (!customBackground) {
+    if (AccountsHelper.selectedBg.value == null) {
         Spacer(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface))
     } else {
         val activity = LocalContext.current as Activity
@@ -142,10 +140,10 @@ fun GameScreen(
             activity.window,
             activity.window.decorView
         ).apply {
-            isAppearanceLightStatusBars = false
+            isAppearanceLightStatusBars = !AccountsHelper.selectedBg.value!!.isDark
         }
         Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.space_bg),
+            imageVector = ImageVector.vectorResource(id = AccountsHelper.selectedBg.value!!.imageResource),
             contentScale = ContentScale.Crop,
             contentDescription = null,
             modifier = Modifier.fillMaxSize()

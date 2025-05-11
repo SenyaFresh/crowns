@@ -1,5 +1,8 @@
 package ru.hse.edu.crowns.data
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -43,6 +46,15 @@ object AccountsHelper {
             }
     }
 
+    fun updateMoney(money: Long) {
+        Firebase.firestore.collection(USERS_COLLECTION).document(Firebase.auth.currentUser!!.uid)
+            .get().addOnSuccessListener {
+                Firebase.firestore.collection(USERS_COLLECTION)
+                    .document(Firebase.auth.currentUser!!.uid)
+                    .update(KEY_MONEY, (it.getLong(KEY_MONEY) ?: 0) + money)
+            }
+    }
+
     suspend fun getLeaders(): List<LeaderTableEntity> {
         val leaders = mutableListOf<LeaderTableEntity>()
         var tries = 5
@@ -66,19 +78,19 @@ object AccountsHelper {
         return leaders
     }
 
-    var selectedBg: BackgroundEntity? = null
+    var selectedBg: MutableState<BackgroundEntity?> = mutableStateOf(null)
 
     suspend fun getSelectedBg(): BackgroundEntity? {
         var tries = 5
-        while (tries > 0 && selectedBg == null) {
-            selectedBg = BackgroundEntity.fromId(
+        while (tries > 0 && selectedBg.value == null) {
+            selectedBg.value = BackgroundEntity.fromId(
                 Firebase.firestore.collection(USERS_COLLECTION)
                     .document(Firebase.auth.currentUser!!.uid)
                     .get().await().getString(KEY_SELECTED_BG).orEmpty()
             )
             tries--
         }
-        return selectedBg
+        return selectedBg.value
     }
 
     suspend fun getAvailableBgs(): List<BackgroundEntity> {
@@ -97,11 +109,23 @@ object AccountsHelper {
     }
 
     fun buyBackground(bg: BackgroundEntity) {
+        Firebase.firestore.collection(USERS_COLLECTION)
+            .document(Firebase.auth.currentUser!!.uid)
+            .get().addOnSuccessListener {
+                val allBg = it.getString(KEY_AVAILABLE_BG)
+                val updatedBg = if (allBg.isNullOrEmpty()) bg.id else allBg + ";" + bg.id
+                Firebase.firestore.collection(USERS_COLLECTION)
+                    .document(Firebase.auth.currentUser!!.uid)
+                    .update(KEY_AVAILABLE_BG, updatedBg)
+            }
 
     }
 
     fun selectBackground(bg: BackgroundEntity) {
-
+        selectedBg.value = bg
+        Firebase.firestore.collection(USERS_COLLECTION)
+            .document(Firebase.auth.currentUser!!.uid)
+            .update(KEY_SELECTED_BG, bg.id)
     }
 
     const val USERS_COLLECTION = "users"

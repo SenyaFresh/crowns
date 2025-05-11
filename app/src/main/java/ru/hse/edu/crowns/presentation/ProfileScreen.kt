@@ -431,11 +431,16 @@ fun ProfileScreen(
                                             .aspectRatio(1.6f)
                                             .align(Alignment.BottomEnd),
                                         onClick = { AccountsHelper.selectBackground(allBackgrounds[it]) },
+                                        enabled = AccountsHelper.selectedBg.value != allBackgrounds[it],
                                         colors = IconButtonDefaults.iconButtonColors(
                                             containerColor = MaterialTheme.colorScheme.tertiary,
                                             contentColor = MaterialTheme.colorScheme.onTertiary,
-                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7f),
-                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.7f),
+                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(
+                                                alpha = 0.7f
+                                            ),
+                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(
+                                                alpha = 0.7f
+                                            ),
                                         )
                                     ) {
                                         Icon(imageVector = Icons.Filled.Check, null)
@@ -447,12 +452,22 @@ fun ProfileScreen(
                                             .height(38.dp)
                                             .aspectRatio(1.6f)
                                             .align(Alignment.BottomEnd),
-                                        onClick = { AccountsHelper.buyBackground(allBackgrounds[it]) },
+                                        enabled = money >= 250,
+                                        onClick = {
+                                            AccountsHelper.buyBackground(allBackgrounds[it])
+                                            AccountsHelper.updateMoney(-250)
+                                            money -= 250
+                                            availableBackgrounds += allBackgrounds[it]
+                                        },
                                         colors = IconButtonDefaults.iconButtonColors(
                                             containerColor = MaterialTheme.colorScheme.tertiary,
                                             contentColor = MaterialTheme.colorScheme.onTertiary,
-                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7f),
-                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.7f),
+                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(
+                                                alpha = 0.7f
+                                            ),
+                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(
+                                                alpha = 0.7f
+                                            ),
                                         )
                                     ) {
                                         Text("250\uD83E\uDE99")
@@ -477,19 +492,24 @@ fun ProfileScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     contentScale = ContentScale.Crop
                                 )
-                                if (availableBackgrounds.contains(allBackgrounds[it])) {
+                                if (availableBackgrounds.contains(allBackgrounds[it + 1])) {
                                     IconButton(
                                         modifier = Modifier
                                             .padding(8.dp)
                                             .height(38.dp)
                                             .aspectRatio(1.6f)
                                             .align(Alignment.BottomEnd),
-                                        onClick = { AccountsHelper.selectBackground(allBackgrounds[it]) },
+                                        onClick = { AccountsHelper.selectBackground(allBackgrounds[it + 1]) },
+                                        enabled = AccountsHelper.selectedBg.value != allBackgrounds[it + 1],
                                         colors = IconButtonDefaults.iconButtonColors(
                                             containerColor = MaterialTheme.colorScheme.tertiary,
                                             contentColor = MaterialTheme.colorScheme.onTertiary,
-                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7f),
-                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.7f),
+                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(
+                                                alpha = 0.7f
+                                            ),
+                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(
+                                                alpha = 0.7f
+                                            ),
                                         )
                                     ) {
                                         Icon(imageVector = Icons.Filled.Check, null)
@@ -501,12 +521,22 @@ fun ProfileScreen(
                                             .height(38.dp)
                                             .aspectRatio(1.6f)
                                             .align(Alignment.BottomEnd),
-                                        onClick = { AccountsHelper.buyBackground(allBackgrounds[it]) },
+                                        enabled = money >= 250,
+                                        onClick = {
+                                            AccountsHelper.buyBackground(allBackgrounds[it + 1])
+                                            AccountsHelper.updateMoney(-250)
+                                            money -= 250
+                                            availableBackgrounds += allBackgrounds[it + 1]
+                                        },
                                         colors = IconButtonDefaults.iconButtonColors(
                                             containerColor = MaterialTheme.colorScheme.tertiary,
                                             contentColor = MaterialTheme.colorScheme.onTertiary,
-                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7f),
-                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.7f),
+                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(
+                                                alpha = 0.7f
+                                            ),
+                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(
+                                                alpha = 0.7f
+                                            ),
                                         )
                                     ) {
                                         Text("250\uD83E\uDE99")
