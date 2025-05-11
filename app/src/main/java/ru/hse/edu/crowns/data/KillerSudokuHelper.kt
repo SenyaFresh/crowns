@@ -3,17 +3,19 @@ package ru.hse.edu.crowns.data
 import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.sudoku.SudokuCell
 import ru.hse.edu.crowns.model.game.sudoku.SudokuGameState
+import ru.hse.edu.crowns.model.game.sudoku.SumZone
 import kotlin.random.Random
 
 object KillerSudokuHelper {
 
     private const val SIZE = 9
-    private const val BACKTRACK_EMPTY = -1 // для заполнения решения
+    private const val BACKTRACK_EMPTY = -1
     private const val MAX_ZONE_SIZE = 4
 
     private var lastGeneratedGrid: Array<IntArray>? = null
 
     fun generateLevel(startCount: Int, seed: Long = System.currentTimeMillis()): SudokuGameState {
+        require(startCount in 0..SIZE * SIZE) { "startCount must be between 0 and 81" }
         val random = Random(seed)
 
         // 1) Сгенерировать полное решение классического судоку
@@ -37,22 +39,21 @@ object KillerSudokuHelper {
             val zoneIndex = zones.size
             val zone = mutableListOf(start)
             zoneBoard[start.row][start.column] = zoneIndex
-
             val frontier = ArrayDeque<Position>().apply { add(start) }
+
             while (frontier.isNotEmpty() && zone.size < MAX_ZONE_SIZE) {
                 val p = frontier.removeFirst()
                 val usedNums = zone.map { solution[it.row][it.column] }.toSet()
-                val candidates =
-                    directions.map { d -> Position(p.row + d.row, p.column + d.column) }
-                        .filter { n ->
-                            n.row in 0 until SIZE && n.column in 0 until SIZE
-                                    && zoneBoard[n.row][n.column] == -1
-                                    && unassigned.contains(n)
-                                    && solution[n.row][n.column] !in usedNums
-                        }
+                val candidates = directions.map { d -> Position(p.row + d.row, p.column + d.column) }
+                    .filter { n ->
+                        n.row in 0 until SIZE && n.column in 0 until SIZE
+                                && zoneBoard[n.row][n.column] == -1
+                                && unassigned.contains(n)
+                                && solution[n.row][n.column] !in usedNums
+                    }
                 if (candidates.isEmpty()) continue
                 val next = candidates.random(random)
-                zone.add(next)
+                zone += next
                 zoneBoard[next.row][next.column] = zoneIndex
                 unassigned.remove(next)
                 frontier.add(next)
@@ -60,16 +61,13 @@ object KillerSudokuHelper {
             zones += zone
         }
 
-        // 3) Построить SumsMap: сумма -> список зон (плоских индексов)
-        val sumsMap = zones
-            .map { cage ->
-                val sum = cage.sumOf { solution[it.row][it.column] }
-                val flat = cage.map { it.row * SIZE + it.column }
-                sum to flat
-            }
-            .groupBy({ it.first }, { it.second })
+        // 3) Построить список SumZone (дубликаты сумм разрешены)
+        val sums = zones.map { cage ->
+            val sumValue = cage.sumOf { solution[it.row][it.column] }
+            SumZone(sumValue, cage)
+        }
 
-        // 4) Выбрать startCount предзаполненных ячеек (остальные не возвращаем)
+        // 4) Выбрать startCount предзаполненных ячеек
         val indices = (0 until SIZE * SIZE).shuffled(random)
         val openSet = indices.take(startCount).toSet()
         val startCells = mutableListOf<SudokuCell>()
@@ -80,8 +78,7 @@ object KillerSudokuHelper {
             }
         }
 
-        // Не возвращаем пустые ячейки, список playerCells остаётся пустым
-        return SudokuGameState(startCells, emptyList(), sumsMap)
+        return SudokuGameState(startCells, emptyList(), sums)
     }
 
     private fun fillGrid(grid: Array<IntArray>, random: Random): Boolean {

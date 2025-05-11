@@ -1,9 +1,10 @@
 package ru.hse.edu.crowns.model.game.sudoku
 
-typealias SumsMap = Map<Int, List<List<Int>>>
+import ru.hse.edu.crowns.model.game.Position
+
 
 data class SudokuGameState(
     val startCells: List<SudokuCell>,
     val playerCells: List<SudokuCell>,
-    val sums: SumsMap
+    val sums: List<SumZone>
 )

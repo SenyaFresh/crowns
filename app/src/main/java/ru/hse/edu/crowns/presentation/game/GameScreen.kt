@@ -1,6 +1,7 @@
 package ru.hse.edu.crowns.presentation.game
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -42,12 +43,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import ru.hse.edu.components.presentation.Difficulty
@@ -262,8 +268,10 @@ fun GameScreen(
             }
             if (viewModel is TangoViewModel) {
                 viewModel.gameState.conditions.forEach {
-                    val x = ((it.firstPosition.column + it.secondPosition.column).toDouble() / 2 * cellSize.value + cellSize.value / 2).dp
-                    val y = ((it.firstPosition.row + it.secondPosition.row).toDouble() / 2 * cellSize.value + cellSize.value / 2).dp
+                    val x =
+                        ((it.firstPosition.column + it.secondPosition.column).toDouble() / 2 * cellSize.value + cellSize.value / 2).dp
+                    val y =
+                        ((it.firstPosition.row + it.secondPosition.row).toDouble() / 2 * cellSize.value + cellSize.value / 2).dp
                     Icon(
                         imageVector = if (it.equal) Icons.Rounded.DragHandle else Icons.Rounded.Close,
                         contentDescription = null,
@@ -273,6 +281,231 @@ fun GameScreen(
                             .background(MaterialTheme.colorScheme.surface, CircleShape),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            }
+            if (viewModel is KillerSudokuViewModel) {
+                val strokeColor = MaterialTheme.colorScheme.outline
+                val strokeWidth = 1.dp.dpToPx()
+                val dash = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                val wallSize = (cellSize * 0.8f).dpToPx()
+                val offset = (cellSize * 0.1f).dpToPx()
+                val directions = listOf(0 to 1, 1 to 0, 0 to -1, -1 to 0)
+                viewModel.gameState.sums.forEach { (sum, cells) ->
+                    val minRow = cells.minOf { it.row }
+                    val minCol = cells.minOf { it.column }
+
+
+                    cells.forEach { cell ->
+                        // право, низ, лево, верх
+                        val directionsWalls = mutableListOf(true, true, true, true)
+                        directions.forEachIndexed { idx, (dr, dc) ->
+                            val nr = cell.row + dr
+                            val nc = cell.column + dc
+                            if (cells.any { it.row == nr && it.column == nc }) {
+                                directionsWalls[idx] = false
+                            }
+                        }
+                        val baseX = (cell.column * cellSize).dpToPx() + offset
+                        val baseY = (cell.row * cellSize).dpToPx() + offset
+                        Canvas(modifier = Modifier.matchParentSize()) {
+                            // право
+                            if (directionsWalls[0]) {
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX + wallSize, baseY),
+                                    end = Offset(baseX + wallSize, baseY + wallSize),
+                                    pathEffect = dash
+                                )
+                                // вверх
+                                if (!directionsWalls[3]) {
+                                    drawLine(
+                                        color = strokeColor,
+                                        strokeWidth = strokeWidth,
+                                        start = Offset(baseX + wallSize, baseY),
+                                        end = Offset(baseX + wallSize, baseY - offset),
+                                        pathEffect = dash
+                                    )
+                                }
+                                // вниз
+                                if (!directionsWalls[1]) {
+                                    drawLine(
+                                        color = strokeColor,
+                                        strokeWidth = strokeWidth,
+                                        start = Offset(baseX + wallSize, baseY + wallSize),
+                                        end = Offset(baseX + wallSize, baseY + wallSize + offset),
+                                        pathEffect = dash
+                                    )
+                                }
+                            }
+
+                            // низ
+                            if (directionsWalls[1]) {
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX, baseY + wallSize),
+                                    end = Offset(baseX + wallSize, baseY + wallSize),
+                                    pathEffect = dash
+                                )
+                                // влево
+                                if (!directionsWalls[2]) {
+                                    drawLine(
+                                        color = strokeColor,
+                                        strokeWidth = strokeWidth,
+                                        start = Offset(baseX, baseY + wallSize),
+                                        end = Offset(baseX - offset, baseY + wallSize),
+                                        pathEffect = dash
+                                    )
+                                }
+                                // вправо
+                                if (!directionsWalls[0]) {
+                                    drawLine(
+                                        color = strokeColor,
+                                        strokeWidth = strokeWidth,
+                                        start = Offset(baseX + wallSize, baseY + wallSize),
+                                        end = Offset(baseX + wallSize + offset, baseY + wallSize),
+                                        pathEffect = dash
+                                    )
+                                }
+                            }
+
+                            // лево
+                            if (directionsWalls[2]) {
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX, baseY),
+                                    end = Offset(baseX, baseY + wallSize),
+                                    pathEffect = dash
+                                )
+                                // вверх
+                                if (!directionsWalls[3]) {
+                                    drawLine(
+                                        color = strokeColor,
+                                        strokeWidth = strokeWidth,
+                                        start = Offset(baseX, baseY),
+                                        end = Offset(baseX, baseY - offset),
+                                        pathEffect = dash
+                                    )
+                                }
+                                // вниз
+                                if (!directionsWalls[1]) {
+                                    drawLine(
+                                        color = strokeColor,
+                                        strokeWidth = strokeWidth,
+                                        start = Offset(baseX, baseY + wallSize),
+                                        end = Offset(baseX, baseY + wallSize + offset),
+                                        pathEffect = dash
+                                    )
+                                }
+                            }
+
+                            // верх
+                            if (directionsWalls[3]) {
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX, baseY),
+                                    end = Offset(baseX + wallSize, baseY),
+                                    pathEffect = dash
+                                )
+                                // влево
+                                if (!directionsWalls[2]) {
+                                    drawLine(
+                                        color = strokeColor,
+                                        strokeWidth = strokeWidth,
+                                        start = Offset(baseX, baseY),
+                                        end = Offset(baseX - offset, baseY),
+                                        pathEffect = dash
+                                    )
+                                }
+                                // вправо
+                                if (!directionsWalls[0]) {
+                                    drawLine(
+                                        color = strokeColor,
+                                        strokeWidth = strokeWidth,
+                                        start = Offset(baseX + wallSize, baseY),
+                                        end = Offset(baseX + wallSize + offset, baseY),
+                                        pathEffect = dash
+                                    )
+                                }
+                            }
+
+                            // Левый верхний угол
+                            if (!directionsWalls[2] && !directionsWalls[3] && !cells.any { it.row == cell.row - 1 && it.column == cell.column - 1 }) {
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX - offset, baseY),
+                                    end = Offset(baseX, baseY),
+                                    pathEffect = dash
+                                )
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX, baseY - offset),
+                                    end = Offset(baseX, baseY),
+                                    pathEffect = dash
+                                )
+                            }
+
+                            // Правый верхний угол
+                            if (!directionsWalls[0] && !directionsWalls[3] && !cells.any { it.row == cell.row - 1 && it.column == cell.column + 1 }) {
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX + wallSize + offset, baseY),
+                                    end = Offset(baseX + wallSize, baseY),
+                                    pathEffect = dash
+                                )
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX + wallSize, baseY - offset),
+                                    end = Offset(baseX + wallSize, baseY),
+                                    pathEffect = dash
+                                )
+                            }
+
+                            // Правый нижний угол
+                            if (!directionsWalls[0] && !directionsWalls[1] && !cells.any { it.row == cell.row + 1 && it.column == cell.column + 1 }) {
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX + wallSize + offset, baseY + wallSize),
+                                    end = Offset(baseX + wallSize, baseY + wallSize),
+                                    pathEffect = dash
+                                )
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX + wallSize, baseY + wallSize + offset),
+                                    end = Offset(baseX + wallSize, baseY + wallSize),
+                                    pathEffect = dash
+                                )
+                            }
+
+                            // Левый нижний угол
+                            if (!directionsWalls[2] && !directionsWalls[1] && !cells.any { it.row == cell.row + 1 && it.column == cell.column - 1 }) {
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX - offset, baseY + wallSize),
+                                    end = Offset(baseX, baseY + wallSize),
+                                    pathEffect = dash
+                                )
+                                drawLine(
+                                    color = strokeColor,
+                                    strokeWidth = strokeWidth,
+                                    start = Offset(baseX, baseY + wallSize + offset),
+                                    end = Offset(baseX, baseY + wallSize),
+                                    pathEffect = dash
+                                )
+                            }
+
+                        }
+                    }
                 }
             }
         }
@@ -309,17 +542,20 @@ fun GameScreen(
                     "1. Ваша цель – обеспечить наличие только одного ферзя в каждой строке, столбце, диагонали и цветовой области.\n" +
                             "2. Коснитесь один раз, чтобы разместить X, и два раза, чтобы разместить Ферзя. Используйте X, чтобы отмечать места, в которых нельзя разместить Ферзя.\n" +
                             "3. Два Ферзя не могут касаться друг друга, даже по диагонали."
+
                 GameType.KILLER_SUDOKU ->
                     "1. Заполните числами от 1 до 9 все строки, колонки и квадраты 3х3, как в классическом судоку.\n" +
                             "2. Не забывайте о зонах сумм — наборах ячеек, выделенных пунктиром.\n" +
                             "3. Сумма цифр в зоне сумм должна быть равна числу в левом верхнем углу этой зоны.\n" +
                             "4. Внутри одной зоны сумм, строки, колонки или квадрата 3х3 каждое число можно использовать только один раз."
+
                 GameType.TANGO ->
                     "1. Заполните сетку так, чтобы каждая клетка содержала либо Луну, либо Солнце.\n" +
                             "2. Рядом друг с другом могут находиться не более 2 Лун или Солнц ,как по вертикали, так и по горизонтали.\n" +
                             "3. Каждая строка (и столбец) должна содержать одинаковое количество Лун и Солнц.\n" +
                             "4. Клетки, разделенные знаком =, должны быть одного типа.\n" +
                             "5. Клетки, разделенные знаком X, должны быть противоположного типа."
+
                 GameType.N_QUEENS ->
                     "1. Ваша цель – обеспечить наличие только одного ферзя в каждой строке, столбце и диагонали.\n" +
                             "2. Коснитесь один раз, чтобы разместить X, и два раза, чтобы разместить Ферзя. Используйте X, чтобы отмечать места, в которых нельзя разместить Ферзя.\n" +
@@ -441,6 +677,13 @@ enum class GameSessionState {
     TIME_ENDED,
     EXIT
 }
+
+@Composable
+fun Dp.dpToPx() = with(LocalDensity.current) { this@dpToPx.toPx() }
+
+
+@Composable
+fun Int.pxToDp() = with(LocalDensity.current) { this@pxToDp.toDp() }
 
 @Preview(showBackground = true)
 @Composable

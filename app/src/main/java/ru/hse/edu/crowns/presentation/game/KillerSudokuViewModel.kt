@@ -15,7 +15,7 @@ class KillerSudokuViewModel @Inject constructor() : GameViewModel() {
 
     override val isWin = mutableStateOf(false)
 
-    var gameState by mutableStateOf(SudokuGameState(emptyList(), emptyList(), emptyMap()))
+    var gameState by mutableStateOf(SudokuGameState(emptyList(), emptyList(), emptyList()))
         private set
 
     override fun generateLevel(n: Int, startCount: Int) {
