@@ -15,6 +15,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import dagger.hilt.android.AndroidEntryPoint
 import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.crowns.model.game.GameType
@@ -42,7 +44,8 @@ fun MainNavigation() {
     val navController = rememberNavController()
     Scaffold { padding ->
         NavHost(
-            navController = navController, startDestination = GamesGraph,
+            navController = navController,
+            startDestination = if (Firebase.auth.currentUser == null) AuthGraph else GamesGraph,
             enterTransition = { fadeIn(tween(200)) },
             exitTransition = { fadeOut(tween(200)) },
             popEnterTransition = { fadeIn(tween(200)) },
@@ -70,12 +73,21 @@ fun MainNavigation() {
                 startDestination = GamesGraph.AllGamesScreen,
             ) {
                 composable<GamesGraph.AllGamesScreen> {
-                    AllGamesScreen { difficulty, gameType -> navController.navigate(GamesGraph.GameScreen(difficulty.label, gameType.toString())) }
+                    AllGamesScreen { difficulty, gameType ->
+                        navController.navigate(
+                            GamesGraph.GameScreen(
+                                difficulty.label,
+                                gameType.toString()
+                            )
+                        )
+                    }
                 }
 
                 composable<GamesGraph.GameScreen> {
                     val difficulty = Difficulty.valueOf(it.arguments?.getString("difficulty"))
-                    val gameType = GameType.valueOf(it.arguments?.getString("gameType") ?: GameType.COLORED_QUEENS.toString())
+                    val gameType = GameType.valueOf(
+                        it.arguments?.getString("gameType") ?: GameType.COLORED_QUEENS.toString()
+                    )
                     GameScreen(
                         difficulty = difficulty,
                         gameType = gameType,

@@ -22,6 +22,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import ru.hse.edu.common.Core
 import ru.hse.edu.components.presentation.DefaultTextField
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
@@ -74,7 +77,18 @@ fun RegistrationScreen(
             visualTransformation = PasswordVisualTransformation()
         )
 
-        PrimaryButton(text = "Зарегистрироваться", onClick = onNavigateToMainScreen)
+        var signUpButtonEnabled by remember { mutableStateOf(true) }
+        PrimaryButton(text = "Зарегистрироваться") {
+            signUpButtonEnabled = false
+            Firebase.auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+                signUpButtonEnabled = true
+                if (it.isSuccessful) {
+                    onNavigateToMainScreen()
+                } else {
+                    Core.toaster.showToast("Не удалось создать аккаунт.")
+                }
+            }
+        }
 
         SecondaryButton(text = "Уже есть аккаунт", onClick = onNavigateToLogin)
     }
