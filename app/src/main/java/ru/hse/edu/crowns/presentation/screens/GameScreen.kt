@@ -1,4 +1,4 @@
-package ru.hse.edu.crowns.presentation.game
+package ru.hse.edu.crowns.presentation.screens
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
@@ -68,11 +68,16 @@ import kotlinx.coroutines.delay
 import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
-import ru.hse.edu.crowns.data.AccountsHelper
+import ru.hse.edu.crowns.data.AccountsDataSource
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.GameType
 import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.sudoku.SudokuCellAction
+import ru.hse.edu.crowns.presentation.game.ColoredQueensViewModel
+import ru.hse.edu.crowns.presentation.game.KillerSudokuViewModel
+import ru.hse.edu.crowns.presentation.game.NQueensGameViewModel
+import ru.hse.edu.crowns.presentation.game.TangoViewModel
+import ru.hse.edu.crowns.presentation.game.colorsList
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -130,7 +135,7 @@ fun GameScreen(
         }
     }
 
-    if (AccountsHelper.selectedBg.value == null) {
+    if (AccountsDataSource.selectedBg.value == null) {
         Spacer(modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.surface))
     } else {
         val activity = LocalContext.current as Activity
@@ -138,10 +143,10 @@ fun GameScreen(
             activity.window,
             activity.window.decorView
         ).apply {
-            isAppearanceLightStatusBars = !AccountsHelper.selectedBg.value!!.isDark
+            isAppearanceLightStatusBars = !AccountsDataSource.selectedBg.value!!.isDark
         }
         Image(
-            imageVector = ImageVector.vectorResource(id = AccountsHelper.selectedBg.value!!.imageResource),
+            imageVector = ImageVector.vectorResource(id = AccountsDataSource.selectedBg.value!!.imageResource),
             contentScale = ContentScale.Crop,
             contentDescription = null,
             modifier = Modifier.fillMaxSize()
@@ -760,7 +765,7 @@ fun GameScreen(
                         }
                         LaunchedEffect(Unit) {
                             if (gameSessionState == GameSessionState.WIN) {
-                                AccountsHelper.updateScore(score.toLong())
+                                AccountsDataSource.updateScore(score.toLong())
                             }
                         }
                         val bodyText = remember(gameSessionState) {

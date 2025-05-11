@@ -1,4 +1,4 @@
-package ru.hse.edu.crowns.data
+package ru.hse.edu.crowns.data.helpers
 
 import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.sudoku.SudokuCell
@@ -18,13 +18,11 @@ object KillerSudokuHelper {
         require(startCount in 0..SIZE * SIZE) { "startCount must be between 0 and 81" }
         val random = Random(seed)
 
-        // 1) Сгенерировать полное решение классического судоку
         val solution = Array(SIZE) { IntArray(SIZE) { BACKTRACK_EMPTY } }
         fillGrid(solution, random)
 
         lastGeneratedGrid = solution.copyOf().map { it.copyOf() }.toTypedArray()
 
-        // 2) Разбить поле на зоны (каджи) с max размером 4
         val zoneBoard = Array(SIZE) { IntArray(SIZE) { -1 } }
         val zones = mutableListOf<MutableList<Position>>()
         val unassigned = ArrayDeque<Position>().apply {
@@ -61,13 +59,11 @@ object KillerSudokuHelper {
             zones += zone
         }
 
-        // 3) Построить список SumZone (дубликаты сумм разрешены)
         val sums = zones.map { cage ->
             val sumValue = cage.sumOf { solution[it.row][it.column] }
             SumZone(sumValue, cage)
         }
 
-        // 4) Выбрать startCount предзаполненных ячеек
         val indices = (0 until SIZE * SIZE).shuffled(random)
         val openSet = indices.take(startCount).toSet()
         val startCells = mutableListOf<SudokuCell>()

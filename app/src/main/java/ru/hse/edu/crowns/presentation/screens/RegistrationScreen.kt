@@ -1,4 +1,4 @@
-package ru.hse.edu.crowns.presentation
+package ru.hse.edu.crowns.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,13 +29,13 @@ import ru.hse.edu.common.Core
 import ru.hse.edu.components.presentation.DefaultTextField
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
-import ru.hse.edu.crowns.data.AccountsHelper.KEY_AVAILABLE_BG
-import ru.hse.edu.crowns.data.AccountsHelper.KEY_EMAIL
-import ru.hse.edu.crowns.data.AccountsHelper.KEY_MONEY
-import ru.hse.edu.crowns.data.AccountsHelper.KEY_NICKNAME
-import ru.hse.edu.crowns.data.AccountsHelper.KEY_SCORE
-import ru.hse.edu.crowns.data.AccountsHelper.KEY_SELECTED_BG
-import ru.hse.edu.crowns.data.AccountsHelper.USERS_COLLECTION
+import ru.hse.edu.crowns.data.AccountsDataSource.KEY_AVAILABLE_BG
+import ru.hse.edu.crowns.data.AccountsDataSource.KEY_EMAIL
+import ru.hse.edu.crowns.data.AccountsDataSource.KEY_MONEY
+import ru.hse.edu.crowns.data.AccountsDataSource.KEY_NICKNAME
+import ru.hse.edu.crowns.data.AccountsDataSource.KEY_SCORE
+import ru.hse.edu.crowns.data.AccountsDataSource.KEY_SELECTED_BG
+import ru.hse.edu.crowns.data.AccountsDataSource.USERS_COLLECTION
 import ru.hse.edu.crowns.ui.theme.AppTheme
 
 @Composable

@@ -1,4 +1,4 @@
-package ru.hse.edu.crowns.presentation
+package ru.hse.edu.crowns.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

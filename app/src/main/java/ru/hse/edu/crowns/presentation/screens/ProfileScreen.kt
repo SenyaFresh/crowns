@@ -1,4 +1,4 @@
-package ru.hse.edu.crowns.presentation
+package ru.hse.edu.crowns.presentation.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -59,7 +59,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
-import ru.hse.edu.crowns.data.AccountsHelper
+import ru.hse.edu.crowns.data.AccountsDataSource
 import ru.hse.edu.crowns.model.game.bg.BackgroundEntity
 import ru.hse.edu.crowns.model.game.profile.LeaderTableEntity
 
@@ -125,7 +125,7 @@ fun ProfileScreen(
                                     modifier = Modifier.weight(1f)
                                 ) {
                                     nickname = ""
-                                    AccountsHelper.updateUsername(newNickname)
+                                    AccountsDataSource.updateUsername(newNickname)
                                         .addOnSuccessListener {
                                             nickname = newNickname
                                         }
@@ -153,11 +153,11 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.Top)
     ) {
         LaunchedEffect(Unit) {
-            nickname = AccountsHelper.getUsername()
+            nickname = AccountsDataSource.getUsername()
         }
 
         LaunchedEffect(Unit) {
-            money = AccountsHelper.getMoney()
+            money = AccountsDataSource.getMoney()
         }
 
         Text(
@@ -264,7 +264,7 @@ fun ProfileScreen(
 
         val leaders = remember { mutableStateListOf<LeaderTableEntity>() }
         LaunchedEffect(Unit) {
-            leaders += AccountsHelper.getLeaders().filter { !leaders.contains(it) }
+            leaders += AccountsDataSource.getLeaders().filter { !leaders.contains(it) }
         }
         Card(
             modifier = Modifier,
@@ -370,7 +370,7 @@ fun ProfileScreen(
         val allBackgrounds = remember { BackgroundEntity.getAllEntities() }
         LaunchedEffect(Unit) {
             availableBackgrounds.clear()
-            availableBackgrounds += AccountsHelper.getAvailableBgs()
+            availableBackgrounds += AccountsDataSource.getAvailableBgs()
         }
         Card(
             modifier = Modifier,
@@ -423,8 +423,8 @@ fun ProfileScreen(
                                             .height(38.dp)
                                             .aspectRatio(1.6f)
                                             .align(Alignment.BottomEnd),
-                                        onClick = { AccountsHelper.selectBackground(allBackgrounds[it]) },
-                                        enabled = AccountsHelper.selectedBg.value != allBackgrounds[it],
+                                        onClick = { AccountsDataSource.selectBackground(allBackgrounds[it]) },
+                                        enabled = AccountsDataSource.selectedBg.value != allBackgrounds[it],
                                         colors = IconButtonDefaults.iconButtonColors(
                                             containerColor = MaterialTheme.colorScheme.tertiary,
                                             contentColor = MaterialTheme.colorScheme.onTertiary,
@@ -447,8 +447,8 @@ fun ProfileScreen(
                                             .align(Alignment.BottomEnd),
                                         enabled = money >= 250,
                                         onClick = {
-                                            AccountsHelper.buyBackground(allBackgrounds[it])
-                                            AccountsHelper.updateMoney(-250)
+                                            AccountsDataSource.buyBackground(allBackgrounds[it])
+                                            AccountsDataSource.updateMoney(-250)
                                             money -= 250
                                             availableBackgrounds += allBackgrounds[it]
                                         },
@@ -492,8 +492,8 @@ fun ProfileScreen(
                                             .height(38.dp)
                                             .aspectRatio(1.6f)
                                             .align(Alignment.BottomEnd),
-                                        onClick = { AccountsHelper.selectBackground(allBackgrounds[it + 1]) },
-                                        enabled = AccountsHelper.selectedBg.value != allBackgrounds[it + 1],
+                                        onClick = { AccountsDataSource.selectBackground(allBackgrounds[it + 1]) },
+                                        enabled = AccountsDataSource.selectedBg.value != allBackgrounds[it + 1],
                                         colors = IconButtonDefaults.iconButtonColors(
                                             containerColor = MaterialTheme.colorScheme.tertiary,
                                             contentColor = MaterialTheme.colorScheme.onTertiary,
@@ -516,8 +516,8 @@ fun ProfileScreen(
                                             .align(Alignment.BottomEnd),
                                         enabled = money >= 250,
                                         onClick = {
-                                            AccountsHelper.buyBackground(allBackgrounds[it + 1])
-                                            AccountsHelper.updateMoney(-250)
+                                            AccountsDataSource.buyBackground(allBackgrounds[it + 1])
+                                            AccountsDataSource.updateMoney(-250)
                                             money -= 250
                                             availableBackgrounds += allBackgrounds[it + 1]
                                         },

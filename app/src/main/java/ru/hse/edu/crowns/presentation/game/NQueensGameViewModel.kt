@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.hse.edu.components.presentation.Difficulty
-import ru.hse.edu.crowns.data.NQueensHelper
+import ru.hse.edu.crowns.data.helpers.NQueensHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell

@@ -7,12 +7,12 @@ sealed class BackgroundEntity(
     val imageResource: Int,
     val isDark: Boolean
 ) {
-    data object ColorfulBackground: BackgroundEntity("colorful_bg", R.drawable.colorful_bg, true)
-    data object GeometricBackground: BackgroundEntity("geometric_bg", R.drawable.geometric_bg, false)
-    data object GradientBackground: BackgroundEntity("gradient_bg", R.drawable.gradient_bg, false)
-    data object HollowedBackground: BackgroundEntity("hollowed_bg", R.drawable.hollowed_bg, true)
-    data object RainbowBackground: BackgroundEntity("rainbow_bg", R.drawable.rainbow_bg, false)
-    data object SpaceBackground: BackgroundEntity("space_bg", R.drawable.space_bg, true)
+    data object ColorfulBackground: BackgroundEntity("colorful_bg", R.drawable.colorful_background, true)
+    data object GeometricBackground: BackgroundEntity("geometric_bg", R.drawable.geometric_background, false)
+    data object GradientBackground: BackgroundEntity("gradient_bg", R.drawable.gradient_background, false)
+    data object HollowedBackground: BackgroundEntity("hollowed_bg", R.drawable.hollowed_background, true)
+    data object RainbowBackground: BackgroundEntity("rainbow_bg", R.drawable.rainbow_background, false)
+    data object SpaceBackground: BackgroundEntity("space_bg", R.drawable.space_background, true)
 
     companion object {
         fun fromId(id: String): BackgroundEntity? {

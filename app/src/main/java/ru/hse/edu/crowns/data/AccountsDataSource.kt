@@ -10,7 +10,7 @@ import kotlinx.coroutines.tasks.await
 import ru.hse.edu.crowns.model.game.bg.BackgroundEntity
 import ru.hse.edu.crowns.model.game.profile.LeaderTableEntity
 
-object AccountsHelper {
+object AccountsDataSource {
 
     suspend fun getUsername(): String {
         return Firebase.firestore.collection(USERS_COLLECTION)

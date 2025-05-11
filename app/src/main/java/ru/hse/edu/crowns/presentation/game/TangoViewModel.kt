@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.hse.edu.components.presentation.Difficulty
-import ru.hse.edu.crowns.data.TangoHelper
+import ru.hse.edu.crowns.data.helpers.TangoHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.tango.TangoCell
 import ru.hse.edu.crowns.model.game.tango.TangoGameState

@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.hse.edu.components.presentation.Difficulty
-import ru.hse.edu.crowns.data.KillerSudokuHelper
+import ru.hse.edu.crowns.data.helpers.KillerSudokuHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.sudoku.SudokuCell
 import ru.hse.edu.crowns.model.game.sudoku.SudokuCellAction

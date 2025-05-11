@@ -1,4 +1,4 @@
-package ru.hse.edu.crowns.data
+package ru.hse.edu.crowns.data.helpers
 
 import ru.hse.edu.crowns.model.game.Position
 import ru.hse.edu.crowns.model.game.queens.CorrectQueenCell

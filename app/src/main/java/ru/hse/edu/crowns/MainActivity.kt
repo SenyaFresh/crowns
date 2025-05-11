@@ -20,13 +20,13 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import dagger.hilt.android.AndroidEntryPoint
 import ru.hse.edu.components.presentation.Difficulty
-import ru.hse.edu.crowns.data.AccountsHelper
+import ru.hse.edu.crowns.data.AccountsDataSource
 import ru.hse.edu.crowns.model.game.GameType
-import ru.hse.edu.crowns.presentation.AllGamesScreen
-import ru.hse.edu.crowns.presentation.LoginScreen
-import ru.hse.edu.crowns.presentation.ProfileScreen
-import ru.hse.edu.crowns.presentation.RegistrationScreen
-import ru.hse.edu.crowns.presentation.game.GameScreen
+import ru.hse.edu.crowns.presentation.screens.AllGamesScreen
+import ru.hse.edu.crowns.presentation.screens.GameScreen
+import ru.hse.edu.crowns.presentation.screens.LoginScreen
+import ru.hse.edu.crowns.presentation.screens.ProfileScreen
+import ru.hse.edu.crowns.presentation.screens.RegistrationScreen
 import ru.hse.edu.crowns.ui.theme.AppTheme
 
 @AndroidEntryPoint
@@ -36,19 +36,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LaunchedEffect(Unit) {
-                AccountsHelper.getUsername()
+                AccountsDataSource.getUsername()
             }
             LaunchedEffect(Unit) {
-                AccountsHelper.getMoney()
+                AccountsDataSource.getMoney()
             }
             LaunchedEffect(Unit) {
-                AccountsHelper.getLeaders()
+                AccountsDataSource.getLeaders()
             }
             LaunchedEffect(Unit) {
-                AccountsHelper.getAvailableBgs()
+                AccountsDataSource.getAvailableBgs()
             }
             LaunchedEffect(Unit) {
-                AccountsHelper.getSelectedBg()
+                AccountsDataSource.getSelectedBg()
             }
             AppTheme {
                 MainNavigation()
