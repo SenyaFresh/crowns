@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -302,10 +303,16 @@ fun ProfileScreen(
                         leaders.forEach {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.height(IntrinsicSize.Min).border(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                modifier = Modifier
+                                    .height(IntrinsicSize.Min)
+                                    .border(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    .background(
+                                        color = if (it.nickname == nickname) MaterialTheme.colorScheme.primaryContainer
+                                        else Color.Transparent
+                                    )
                             ) {
                                 Text(
                                     text = it.position.toString(),
@@ -328,7 +335,9 @@ fun ProfileScreen(
                                     fontWeight = FontWeight.Bold,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.weight(3f).padding(start = 4.dp)
+                                    modifier = Modifier
+                                        .weight(3f)
+                                        .padding(start = 4.dp)
                                 )
                                 Spacer(
                                     modifier = Modifier
@@ -342,7 +351,9 @@ fun ProfileScreen(
                                     fontWeight = FontWeight.Bold,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.weight(1f).padding(start = 4.dp)
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(start = 4.dp)
                                 )
                             }
                         }
