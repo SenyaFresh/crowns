@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.hse.edu.crowns.data.KillerSudokuHelper
 import ru.hse.edu.crowns.model.game.CellAction
+import ru.hse.edu.crowns.model.game.sudoku.SudokuCell
 import ru.hse.edu.crowns.model.game.sudoku.SudokuCellAction
 import ru.hse.edu.crowns.model.game.sudoku.SudokuGameState
 import javax.inject.Inject
@@ -40,6 +41,23 @@ class KillerSudokuViewModel @Inject constructor() : GameViewModel() {
     override fun onCellAction(action: CellAction) = Unit
 
     fun onSudokuCellAction(action: SudokuCellAction) {
-
+        if (action.value !in (1..9)) {
+            toaster.showToast("Сначала выберите число.")
+            return
+        }
+        gameState.startCells.find { it.position == action.position }
+            ?.let {
+                toaster.showToast("Нельзя изменять стартовые поля.")
+                return
+            }
+        gameState = gameState.copy(
+            playerCells = gameState.playerCells.plus(
+                SudokuCell(
+                    action.position,
+                    action.value,
+                    KillerSudokuHelper.lastGeneratedGrid!![action.position.row][action.position.column] == action.value
+                )
+            )
+        )
     }
 }

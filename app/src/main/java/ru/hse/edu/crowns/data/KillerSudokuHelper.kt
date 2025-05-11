@@ -12,7 +12,7 @@ object KillerSudokuHelper {
     private const val BACKTRACK_EMPTY = -1
     private const val MAX_ZONE_SIZE = 4
 
-    private var lastGeneratedGrid: Array<IntArray>? = null
+    var lastGeneratedGrid: Array<IntArray>? = null
 
     fun generateLevel(startCount: Int, seed: Long = System.currentTimeMillis()): SudokuGameState {
         require(startCount in 0..SIZE * SIZE) { "startCount must be between 0 and 81" }

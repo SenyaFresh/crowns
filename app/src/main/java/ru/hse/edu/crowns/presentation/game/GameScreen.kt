@@ -64,6 +64,7 @@ import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.GameType
 import ru.hse.edu.crowns.model.game.Position
+import ru.hse.edu.crowns.model.game.sudoku.SudokuCellAction
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,6 +97,8 @@ fun GameScreen(
             showDialog = true
         }
     }
+
+    var number by remember { mutableIntStateOf(0) }
 
     var timeLeft by remember { mutableIntStateOf(difficulty.time) }
     var tipsLeft by remember { mutableIntStateOf(difficulty.tips) }
@@ -207,7 +210,16 @@ fun GameScreen(
                                     .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
                                         indication = null
-                                    ) { viewModel.onCellAction(CellAction(position)) },
+                                    ) {
+                                        if (viewModel is KillerSudokuViewModel) {
+                                            viewModel.onSudokuCellAction(
+                                                SudokuCellAction(
+                                                    position,
+                                                    number
+                                                )
+                                            )
+                                        } else viewModel.onCellAction(CellAction(position))
+                                    },
                                 contentAlignment = Alignment.Center
                             ) {
                                 when (viewModel) {
@@ -288,11 +300,12 @@ fun GameScreen(
             if (viewModel is KillerSudokuViewModel) {
                 val strokeColor = MaterialTheme.colorScheme.outline
                 val strokeWidth = 1.dp.dpToPx()
-                val dash = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                val dash = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 3f)
                 val wallSize = (cellSize * 0.8f).dpToPx()
                 val offset = (cellSize * 0.1f).dpToPx()
                 val directions = listOf(0 to 1, 1 to 0, 0 to -1, -1 to 0)
                 viewModel.gameState.sums.forEach { (sum, cells) ->
+
                     cells.forEach { cell ->
                         // право, низ, лево, верх
                         val directionsWalls = mutableListOf(true, true, true, true)
@@ -506,7 +519,12 @@ fun GameScreen(
                     }
                     val minRow = cells.minOf { it.row }
                     val minCol = cells.filter { it.row == minRow }.minOf { it.column }
-                    val isStart = viewModel.gameState.startCells.any { it.position == Position(minRow, minCol) }
+                    val isStart = viewModel.gameState.startCells.any {
+                        it.position == Position(
+                            minRow,
+                            minCol
+                        )
+                    }
                     val textX = (minCol * cellSize)
                     val textY = (minRow * cellSize)
                     Text(
@@ -530,6 +548,75 @@ fun GameScreen(
                                 shape = RoundedCornerShape(2.dp)
                             )
                     )
+                }
+                val cellSizePx = cellSize.dpToPx()
+                val mainStrokeWidth = 3.dp.dpToPx()
+                val mainStrokeColor = MaterialTheme.colorScheme.onSurface
+                Canvas(modifier = Modifier.matchParentSize()) {
+                    drawLine(
+                        color = mainStrokeColor,
+                        strokeWidth = mainStrokeWidth,
+                        start = Offset(cellSizePx * 3, 0F),
+                        end = Offset(cellSizePx * 3, cellSizePx * 9)
+                    )
+                    drawLine(
+                        color = mainStrokeColor,
+                        strokeWidth = mainStrokeWidth,
+                        start = Offset(cellSizePx * 6, 0F),
+                        end = Offset(cellSizePx * 6, cellSizePx * 9)
+                    )
+                    drawLine(
+                        color = mainStrokeColor,
+                        strokeWidth = mainStrokeWidth,
+                        start = Offset(0F, cellSizePx * 3),
+                        end = Offset(cellSizePx * 9, cellSizePx * 3)
+                    )
+                    drawLine(
+                        color = mainStrokeColor,
+                        strokeWidth = mainStrokeWidth,
+                        start = Offset(0F, cellSizePx * 6),
+                        end = Offset(cellSizePx * 9, cellSizePx * 6)
+                    )
+                }
+            }
+        }
+
+        if (viewModel is KillerSudokuViewModel) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .height(40.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                (1..9).forEach { num ->
+                    Box(
+                        modifier = Modifier
+                            .size(cellSize * 0.9f)
+                            .background(
+                                color = if (num == number) MaterialTheme.colorScheme.primaryContainer
+                                else MaterialTheme.colorScheme.tertiaryContainer,
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                            .clickable {
+                                number = num
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = num.toString(),
+                            fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                            color = if (num == number) MaterialTheme.colorScheme.onPrimaryContainer
+                            else MaterialTheme.colorScheme.onTertiaryContainer,
+                            textAlign = TextAlign.Center,
+                            style = TextStyle.Default.copy(
+                                platformStyle = PlatformTextStyle(
+                                    includeFontPadding = false
+                                )
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -704,10 +791,6 @@ enum class GameSessionState {
 
 @Composable
 fun Dp.dpToPx() = with(LocalDensity.current) { this@dpToPx.toPx() }
-
-
-@Composable
-fun Int.pxToDp() = with(LocalDensity.current) { this@pxToDp.toDp() }
 
 @Preview(showBackground = true)
 @Composable
