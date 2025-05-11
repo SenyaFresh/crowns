@@ -5,6 +5,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import ru.hse.edu.crowns.model.game.bg.BackgroundEntity
 import ru.hse.edu.crowns.model.game.profile.LeaderTableEntity
 
 object AccountsHelper {
@@ -65,11 +66,30 @@ object AccountsHelper {
         return leaders
     }
 
+    var selectedBg: BackgroundEntity? = null
+
+    suspend fun getSelectedBg(): BackgroundEntity? {
+        return BackgroundEntity.fromId(
+            Firebase.firestore.collection(USERS_COLLECTION)
+                .document(Firebase.auth.currentUser!!.uid)
+                .get().await().getString(KEY_SELECTED_BG).orEmpty()
+        )
+    }
+
+    suspend fun getAvailableBgs(): List<BackgroundEntity> {
+        return Firebase.firestore.collection(USERS_COLLECTION)
+            .document(Firebase.auth.currentUser!!.uid)
+            .get().await().getString(KEY_AVAILABLE_BG).orEmpty().split(";").mapNotNull {
+                BackgroundEntity.fromId(it)
+            }
+    }
 
     const val USERS_COLLECTION = "users"
     const val KEY_EMAIL = "email"
     const val KEY_NICKNAME = "nickname"
     const val KEY_MONEY = "money"
     const val KEY_SCORE = "score"
+    const val KEY_SELECTED_BG = "selected_bg"
+    const val KEY_AVAILABLE_BG = "available_bg"
 
 }

@@ -29,10 +29,12 @@ import ru.hse.edu.common.Core
 import ru.hse.edu.components.presentation.DefaultTextField
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
+import ru.hse.edu.crowns.data.AccountsHelper.KEY_AVAILABLE_BG
 import ru.hse.edu.crowns.data.AccountsHelper.KEY_EMAIL
 import ru.hse.edu.crowns.data.AccountsHelper.KEY_MONEY
 import ru.hse.edu.crowns.data.AccountsHelper.KEY_NICKNAME
 import ru.hse.edu.crowns.data.AccountsHelper.KEY_SCORE
+import ru.hse.edu.crowns.data.AccountsHelper.KEY_SELECTED_BG
 import ru.hse.edu.crowns.data.AccountsHelper.USERS_COLLECTION
 import ru.hse.edu.crowns.ui.theme.AppTheme
 
@@ -95,6 +97,8 @@ fun RegistrationScreen(
                             KEY_NICKNAME to nickname,
                             KEY_MONEY to 0L,
                             KEY_SCORE to 0L,
+                            KEY_SELECTED_BG to "",
+                            KEY_AVAILABLE_BG to ""
                         )
                         Firebase.firestore.collection(USERS_COLLECTION)
                             .document(authResultTask.result.user!!.uid)
