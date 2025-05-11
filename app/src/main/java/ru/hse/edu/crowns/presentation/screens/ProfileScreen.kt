@@ -71,6 +71,11 @@ fun ProfileScreen(
     var nickname by remember { mutableStateOf("") }
     var money by remember { mutableLongStateOf(0L) }
     var dialogState by remember { mutableStateOf(DialogState.NOT_SHOWN) }
+    val leaders = remember { mutableStateListOf<LeaderTableEntity>() }
+    LaunchedEffect(Unit) {
+        leaders += AccountsDataSource.getLeaders().filter { !leaders.contains(it) }
+    }
+
 
     if (dialogState != DialogState.NOT_SHOWN) {
         BasicAlertDialog(onDismissRequest = {
@@ -260,11 +265,6 @@ fun ProfileScreen(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-        }
-
-        val leaders = remember { mutableStateListOf<LeaderTableEntity>() }
-        LaunchedEffect(Unit) {
-            leaders += AccountsDataSource.getLeaders().filter { !leaders.contains(it) }
         }
         Card(
             modifier = Modifier,
