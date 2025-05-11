@@ -51,6 +51,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-authentication = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
 
 
 [plugins]

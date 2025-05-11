@@ -24,10 +24,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 import ru.hse.edu.common.Core
 import ru.hse.edu.components.presentation.DefaultTextField
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
+import ru.hse.edu.crowns.data.AccountsHelper.KEY_EMAIL
+import ru.hse.edu.crowns.data.AccountsHelper.KEY_NICKNAME
+import ru.hse.edu.crowns.data.AccountsHelper.USERS_COLLECTION
 import ru.hse.edu.crowns.ui.theme.AppTheme
 
 @Composable
@@ -78,16 +82,31 @@ fun RegistrationScreen(
         )
 
         var signUpButtonEnabled by remember { mutableStateOf(true) }
-        PrimaryButton(text = "Зарегистрироваться") {
+        PrimaryButton(text = "Зарегистрироваться", activated = signUpButtonEnabled) {
             signUpButtonEnabled = false
-            Firebase.auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-                signUpButtonEnabled = true
-                if (it.isSuccessful) {
-                    onNavigateToMainScreen()
-                } else {
-                    Core.toaster.showToast("Не удалось создать аккаунт.")
+            Firebase.auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { authResultTask ->
+                    signUpButtonEnabled = true
+                    if (authResultTask.isSuccessful) {
+                        val firestoreSignUpData = hashMapOf(
+                            KEY_EMAIL to email,
+                            KEY_NICKNAME to nickname,
+                        )
+                        Firebase.firestore.collection(USERS_COLLECTION)
+                            .document(authResultTask.result.user!!.uid)
+                            .set(firestoreSignUpData)
+                            .addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    onNavigateToMainScreen()
+                                } else {
+                                    Core.toaster.showToast("Не удалось создать аккаунт.")
+                                }
+                            }
+                        onNavigateToMainScreen()
+                    } else {
+                        Core.toaster.showToast("Не удалось создать аккаунт.")
+                    }
                 }
-            }
         }
 
         SecondaryButton(text = "Уже есть аккаунт", onClick = onNavigateToLogin)
