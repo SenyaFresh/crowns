@@ -2,23 +2,30 @@ package ru.hse.edu.crowns.presentation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,11 +37,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,6 +54,7 @@ import com.google.firebase.ktx.Firebase
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.data.AccountsHelper
+import ru.hse.edu.crowns.model.game.profile.LeaderTableEntity
 import ru.hse.edu.crowns.presentation.game.GameSessionState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,7 +96,9 @@ fun ProfileScreen(
                             var newNickname by remember { mutableStateOf(nickname) }
 
                             OutlinedTextField(
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
                                 maxLines = 1,
                                 value = newNickname,
                                 onValueChange = { newNickname = it },
@@ -166,8 +178,8 @@ fun ProfileScreen(
                     text = nickname.ifEmpty { "Загрузка..." },
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = if (nickname.isEmpty()) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    else MaterialTheme.colorScheme.onSurface,
+                    color = if (nickname.isEmpty()) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                    else MaterialTheme.colorScheme.primary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.widthIn(max = 160.dp)
@@ -239,6 +251,99 @@ fun ProfileScreen(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+            }
+        }
+
+        val leaders = remember { mutableStateListOf<LeaderTableEntity>() }
+        LaunchedEffect(Unit) {
+            leaders.clear()
+            leaders += AccountsHelper.getLeaders()
+        }
+        Card(
+            modifier = Modifier,
+            shape = MaterialTheme.shapes.extraLarge,
+            elevation = CardDefaults.cardElevation(2.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+            ) {
+                Text(
+                    text = "Таблица лидеров",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (leaders.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(2f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .border(
+                                2.dp,
+                                MaterialTheme.colorScheme.onSurfaceVariant,
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                    ) {
+                        leaders.forEach {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.height(IntrinsicSize.Min)
+                            ) {
+                                Text(
+                                    text = it.position.toString(),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.width(30.dp)
+                                )
+                                Spacer(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .width(2.dp)
+                                        .background(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                )
+                                Text(
+                                    text = it.nickname,
+                                    color = MaterialTheme.colorScheme.inverseSurface,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(3f).padding(start = 4.dp)
+                                )
+                                Spacer(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .width(2.dp)
+                                        .background(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                )
+                                Text(
+                                    text = it.score.toString(),
+                                    color = MaterialTheme.colorScheme.inverseSurface,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f).padding(start = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -740,8 +740,8 @@ fun GameScreen(
                         val bodyText = remember(gameSessionState) {
                             when (gameSessionState) {
                                 GameSessionState.WIN -> "Поздравляем, вы победили!\n" +
-                                        "Потраченок секунд: ${difficulty.time - timeLeft};\n" +
-                                        "Потрачено подсказок: ${difficulty.tips - tipsLeft}.\n" +
+                                        "Потраченок секунд: ${difficulty.time - timeLeft}\n" +
+                                        "Потрачено подсказок: ${difficulty.tips - tipsLeft}\n" +
                                         "Вы заработали $score\uD83E\uDE99!"
                                 GameSessionState.TIME_ENDED -> "К сожалению, вы проиграли и не заработали монет."
                                 else -> "Вы уверены, что хотите выйти? Весь прогресс будет потерян."

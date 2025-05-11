@@ -5,6 +5,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import ru.hse.edu.crowns.model.game.profile.LeaderTableEntity
 
 object AccountsHelper {
 
@@ -39,6 +40,29 @@ object AccountsHelper {
                     .document(Firebase.auth.currentUser!!.uid)
                     .update(KEY_SCORE, (it.getLong(KEY_SCORE) ?: 0) + score)
             }
+    }
+
+    suspend fun getLeaders(): List<LeaderTableEntity> {
+        val leaders = mutableListOf<LeaderTableEntity>()
+        var tries = 5
+        while (tries > 0 && leaders.isEmpty()) {
+            Firebase.firestore.collection(USERS_COLLECTION)
+                .orderBy(KEY_SCORE)
+                .get().addOnSuccessListener {
+                    it.documents.take(10).mapIndexed { index, documentSnapshot ->
+                        leaders.add(
+                            LeaderTableEntity(
+                                index + 1,
+                                documentSnapshot.getString(KEY_NICKNAME) ?: "",
+                                documentSnapshot.getLong(KEY_SCORE) ?: 0
+                            )
+                        )
+                    }
+                }.await()
+            tries--
+        }
+
+        return leaders
     }
 
 
