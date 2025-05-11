@@ -32,7 +32,7 @@ import ru.hse.edu.crowns.R
 import ru.hse.edu.crowns.model.game.GameType
 
 @Composable
-fun AllGamesScreen(onGameClick: (Difficulty, GameType) -> Unit) {
+fun AllGamesScreen(onGameClick: (Difficulty, GameType) -> Unit, onNavigateToProfile: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +56,7 @@ fun AllGamesScreen(onGameClick: (Difficulty, GameType) -> Unit) {
                 modifier = Modifier
                     .height(38.dp)
                     .aspectRatio(1.6f),
-                onClick = { /*TODO*/ },
+                onClick = onNavigateToProfile,
                 colors = IconButtonDefaults.iconButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -104,5 +104,5 @@ fun AllGamesScreen(onGameClick: (Difficulty, GameType) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun AllGamesScreenPreview() {
-    AllGamesScreen {_, _ -> }
+    AllGamesScreen ({ _, _ -> }, {})
 }

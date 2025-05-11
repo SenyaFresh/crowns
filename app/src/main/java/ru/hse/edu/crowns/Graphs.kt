@@ -21,3 +21,11 @@ data object GamesGraph {
     @Serializable
     data class GameScreen(val difficulty: String, val gameType: String)
 }
+
+@Serializable
+data object ProfileGraph {
+
+    @Serializable
+    data object ProfileScreen
+
+}

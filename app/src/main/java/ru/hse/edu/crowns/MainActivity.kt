@@ -22,6 +22,7 @@ import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.crowns.model.game.GameType
 import ru.hse.edu.crowns.presentation.AllGamesScreen
 import ru.hse.edu.crowns.presentation.LoginScreen
+import ru.hse.edu.crowns.presentation.ProfileScreen
 import ru.hse.edu.crowns.presentation.RegistrationScreen
 import ru.hse.edu.crowns.presentation.game.GameScreen
 import ru.hse.edu.crowns.ui.theme.AppTheme
@@ -73,14 +74,17 @@ fun MainNavigation() {
                 startDestination = GamesGraph.AllGamesScreen,
             ) {
                 composable<GamesGraph.AllGamesScreen> {
-                    AllGamesScreen { difficulty, gameType ->
-                        navController.navigate(
-                            GamesGraph.GameScreen(
-                                difficulty.label,
-                                gameType.toString()
+                    AllGamesScreen(
+                        onGameClick = { difficulty, gameType ->
+                            navController.navigate(
+                                GamesGraph.GameScreen(
+                                    difficulty.label,
+                                    gameType.toString()
+                                )
                             )
-                        )
-                    }
+                        },
+                        onNavigateToProfile = { navController.navigate(ProfileGraph) }
+                    )
                 }
 
                 composable<GamesGraph.GameScreen> {
@@ -93,6 +97,14 @@ fun MainNavigation() {
                         gameType = gameType,
                         onExit = { navController.popBackStack() },
                     )
+                }
+            }
+
+            navigation<ProfileGraph>(
+                startDestination = ProfileGraph.ProfileScreen
+            ) {
+                composable<ProfileGraph.ProfileScreen> {
+                    ProfileScreen { navController.navigate(AuthGraph) }
                 }
             }
         }
