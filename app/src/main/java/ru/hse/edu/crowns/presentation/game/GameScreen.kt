@@ -61,6 +61,7 @@ import kotlinx.coroutines.delay
 import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
+import ru.hse.edu.crowns.data.AccountsHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.GameType
 import ru.hse.edu.crowns.model.game.Position
@@ -724,9 +725,19 @@ fun GameScreen(
                                 else -> "Покинуть уровень?"
                             }
                         }
+                        val money = (difficulty.time - timeLeft) * (1 + tipsLeft) * when (difficulty) {
+                            Difficulty.Easy -> 1
+                            Difficulty.Medium -> 2
+                            Difficulty.Hard -> 3
+                        }
+                        if (gameSessionState == GameSessionState.WIN) {
+                            AccountsHelper.updateMoney(money.toLong())
+                        }
                         val bodyText = remember(gameSessionState) {
                             when (gameSessionState) {
-                                GameSessionState.WIN -> "Поздравляем, вы победили! Вы заработали стока та монет."
+                                GameSessionState.WIN -> "Поздравляем, вы победили! Вы потратили ${difficulty.time - timeLeft} секунд " +
+                                        " ${difficulty.tips - tipsLeft} подсказку(и) на решение этой задачи. " +
+                                        "Вы заработали $money монет."
                                 GameSessionState.TIME_ENDED -> "К сожалению, вы проиграли и не заработали монет."
                                 else -> "Вы уверены, что хотите выйти? Весь прогресс будет потерян."
                             }
