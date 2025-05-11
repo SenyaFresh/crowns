@@ -53,7 +53,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -69,7 +68,6 @@ import kotlinx.coroutines.delay
 import ru.hse.edu.components.presentation.Difficulty
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
-import ru.hse.edu.crowns.R
 import ru.hse.edu.crowns.data.AccountsHelper
 import ru.hse.edu.crowns.model.game.CellAction
 import ru.hse.edu.crowns.model.game.GameType

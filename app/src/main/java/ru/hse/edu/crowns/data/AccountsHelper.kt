@@ -1,7 +1,6 @@
 package ru.hse.edu.crowns.data
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
