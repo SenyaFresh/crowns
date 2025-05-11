@@ -48,6 +48,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -291,10 +293,6 @@ fun GameScreen(
                 val offset = (cellSize * 0.1f).dpToPx()
                 val directions = listOf(0 to 1, 1 to 0, 0 to -1, -1 to 0)
                 viewModel.gameState.sums.forEach { (sum, cells) ->
-                    val minRow = cells.minOf { it.row }
-                    val minCol = cells.minOf { it.column }
-
-
                     cells.forEach { cell ->
                         // право, низ, лево, верх
                         val directionsWalls = mutableListOf(true, true, true, true)
@@ -506,6 +504,32 @@ fun GameScreen(
 
                         }
                     }
+                    val minRow = cells.minOf { it.row }
+                    val minCol = cells.filter { it.row == minRow }.minOf { it.column }
+                    val isStart = viewModel.gameState.startCells.any { it.position == Position(minRow, minCol) }
+                    val textX = (minCol * cellSize)
+                    val textY = (minRow * cellSize)
+                    Text(
+                        text = sum.toString(),
+                        color = MaterialTheme.colorScheme.outline,
+                        fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                        style = TextStyle.Default.copy(
+                            platformStyle = PlatformTextStyle(
+                                includeFontPadding = false
+                            )
+                        ),
+                        modifier = Modifier
+                            .offset(textX, textY)
+                            .padding(2.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(2.dp)
+                            )
+                            .background(
+                                color = if (isStart) Color.Gray.copy(alpha = 0.5f) else Color.Transparent,
+                                shape = RoundedCornerShape(2.dp)
+                            )
+                    )
                 }
             }
         }
