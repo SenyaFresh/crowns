@@ -26,5 +26,16 @@ sealed class BackgroundEntity(
                 else -> null
             }
         }
+
+        fun getAllEntities(): List<BackgroundEntity> {
+            return listOf(
+                ColorfulBackground,
+                GeometricBackground,
+                GradientBackground,
+                HollowedBackground,
+                RainbowBackground,
+                SpaceBackground
+            )
+        }
     }
 }

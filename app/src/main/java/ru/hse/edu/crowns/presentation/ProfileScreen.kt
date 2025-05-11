@@ -1,8 +1,11 @@
 package ru.hse.edu.crowns.presentation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +21,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Edit
@@ -45,6 +50,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,6 +62,7 @@ import com.google.firebase.ktx.Firebase
 import ru.hse.edu.components.presentation.PrimaryButton
 import ru.hse.edu.components.presentation.SecondaryButton
 import ru.hse.edu.crowns.data.AccountsHelper
+import ru.hse.edu.crowns.model.game.bg.BackgroundEntity
 import ru.hse.edu.crowns.model.game.profile.LeaderTableEntity
 import ru.hse.edu.crowns.presentation.game.GameSessionState
 
@@ -142,7 +150,8 @@ fun ProfileScreen(
             .fillMaxSize()
             .padding(20.dp)
             .padding(top = 30.dp)
-            .background(color = MaterialTheme.colorScheme.surface),
+            .background(color = MaterialTheme.colorScheme.surface)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.Top)
     ) {
@@ -354,6 +363,81 @@ fun ProfileScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .padding(start = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        val availableBackgrounds = remember { mutableStateListOf<BackgroundEntity>() }
+        val allBackgrounds = remember { BackgroundEntity.getAllEntities() }
+        LaunchedEffect(Unit) {
+            availableBackgrounds.clear()
+            availableBackgrounds += AccountsHelper.getAvailableBgs()
+        }
+        Card(
+            modifier = Modifier,
+            shape = MaterialTheme.shapes.extraLarge,
+            elevation = CardDefaults.cardElevation(2.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                Text(
+                    text = "Магазин фонов",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp)
+                        .height(IntrinsicSize.Min),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    (allBackgrounds.indices step 2).forEach {
+                        Row {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(1f)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .border(
+                                        2.dp,
+                                        MaterialTheme.colorScheme.onSurfaceVariant,
+                                        RoundedCornerShape(12.dp)
+                                    )
+                            ) {
+                                Image(
+                                    painter = painterResource(allBackgrounds[it].imageResource),
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(1f)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .border(
+                                        2.dp,
+                                        MaterialTheme.colorScheme.onSurfaceVariant,
+                                        RoundedCornerShape(12.dp)
+                                    )
+                            ) {
+                                Image(
+                                    painter = painterResource(allBackgrounds[it + 1].imageResource),
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
                                 )
                             }
                         }

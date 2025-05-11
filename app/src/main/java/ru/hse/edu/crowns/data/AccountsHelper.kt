@@ -69,19 +69,31 @@ object AccountsHelper {
     var selectedBg: BackgroundEntity? = null
 
     suspend fun getSelectedBg(): BackgroundEntity? {
-        return BackgroundEntity.fromId(
-            Firebase.firestore.collection(USERS_COLLECTION)
-                .document(Firebase.auth.currentUser!!.uid)
-                .get().await().getString(KEY_SELECTED_BG).orEmpty()
-        )
+        var tries = 5
+        while (tries > 0 && selectedBg == null) {
+            selectedBg = BackgroundEntity.fromId(
+                Firebase.firestore.collection(USERS_COLLECTION)
+                    .document(Firebase.auth.currentUser!!.uid)
+                    .get().await().getString(KEY_SELECTED_BG).orEmpty()
+            )
+            tries--
+        }
+        return selectedBg
     }
 
     suspend fun getAvailableBgs(): List<BackgroundEntity> {
-        return Firebase.firestore.collection(USERS_COLLECTION)
-            .document(Firebase.auth.currentUser!!.uid)
-            .get().await().getString(KEY_AVAILABLE_BG).orEmpty().split(";").mapNotNull {
-                BackgroundEntity.fromId(it)
-            }
+        var tries = 5
+        var availableBg: List<BackgroundEntity>? = null
+
+        while (tries > 0 && availableBg == null) {
+            availableBg = Firebase.firestore.collection(USERS_COLLECTION)
+                .document(Firebase.auth.currentUser!!.uid)
+                .get().await().getString(KEY_AVAILABLE_BG).orEmpty().split(";").mapNotNull {
+                    BackgroundEntity.fromId(it)
+                }
+            tries--
+        }
+        return availableBg.orEmpty()
     }
 
     const val USERS_COLLECTION = "users"
