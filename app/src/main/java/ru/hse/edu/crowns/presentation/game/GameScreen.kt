@@ -725,7 +725,7 @@ fun GameScreen(
                                 else -> "Покинуть уровень?"
                             }
                         }
-                        val money = remember {
+                        val score = remember {
                             (difficulty.time - timeLeft) * (1 + tipsLeft) * when (difficulty) {
                                 Difficulty.Easy -> 1
                                 Difficulty.Medium -> 2
@@ -734,7 +734,7 @@ fun GameScreen(
                         }
                         LaunchedEffect(Unit) {
                             if (gameSessionState == GameSessionState.WIN) {
-                                AccountsHelper.updateMoney(money.toLong())
+                                AccountsHelper.updateScore(score.toLong())
                             }
                         }
                         val bodyText = remember(gameSessionState) {
@@ -742,7 +742,7 @@ fun GameScreen(
                                 GameSessionState.WIN -> "Поздравляем, вы победили!\n" +
                                         "Потраченок секунд: ${difficulty.time - timeLeft};\n" +
                                         "Потрачено подсказок: ${difficulty.tips - tipsLeft}.\n" +
-                                        "Вы заработали $money\uD83E\uDE99!"
+                                        "Вы заработали $score\uD83E\uDE99!"
                                 GameSessionState.TIME_ENDED -> "К сожалению, вы проиграли и не заработали монет."
                                 else -> "Вы уверены, что хотите выйти? Весь прогресс будет потерян."
                             }

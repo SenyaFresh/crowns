@@ -26,12 +26,18 @@ object AccountsHelper {
             .get().await().getLong(KEY_MONEY) ?: 0L
     }
 
-    fun updateMoney(money: Long) {
+    fun updateScore(score: Long) {
         Firebase.firestore.collection(USERS_COLLECTION).document(Firebase.auth.currentUser!!.uid)
             .get().addOnSuccessListener {
                 Firebase.firestore.collection(USERS_COLLECTION)
                     .document(Firebase.auth.currentUser!!.uid)
-                    .update(KEY_MONEY, (it.getLong(KEY_MONEY) ?: 0) + money)
+                    .update(KEY_MONEY, (it.getLong(KEY_MONEY) ?: 0) + score)
+            }
+        Firebase.firestore.collection(USERS_COLLECTION).document(Firebase.auth.currentUser!!.uid)
+            .get().addOnSuccessListener {
+                Firebase.firestore.collection(USERS_COLLECTION)
+                    .document(Firebase.auth.currentUser!!.uid)
+                    .update(KEY_SCORE, (it.getLong(KEY_SCORE) ?: 0) + score)
             }
     }
 
@@ -40,5 +46,6 @@ object AccountsHelper {
     const val KEY_EMAIL = "email"
     const val KEY_NICKNAME = "nickname"
     const val KEY_MONEY = "money"
+    const val KEY_SCORE = "score"
 
 }
