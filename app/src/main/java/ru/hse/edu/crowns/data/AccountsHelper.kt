@@ -96,6 +96,14 @@ object AccountsHelper {
         return availableBg.orEmpty()
     }
 
+    fun buyBackground(bg: BackgroundEntity) {
+
+    }
+
+    fun selectBackground(bg: BackgroundEntity) {
+
+    }
+
     const val USERS_COLLECTION = "users"
     const val KEY_EMAIL = "email"
     const val KEY_NICKNAME = "nickname"

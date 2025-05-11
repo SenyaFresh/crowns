@@ -26,7 +26,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -49,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -420,6 +423,41 @@ fun ProfileScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     contentScale = ContentScale.Crop
                                 )
+                                if (availableBackgrounds.contains(allBackgrounds[it])) {
+                                    IconButton(
+                                        modifier = Modifier
+                                            .padding(8.dp)
+                                            .height(38.dp)
+                                            .aspectRatio(1.6f)
+                                            .align(Alignment.BottomEnd),
+                                        onClick = { AccountsHelper.selectBackground(allBackgrounds[it]) },
+                                        colors = IconButtonDefaults.iconButtonColors(
+                                            containerColor = MaterialTheme.colorScheme.tertiary,
+                                            contentColor = MaterialTheme.colorScheme.onTertiary,
+                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7f),
+                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.7f),
+                                        )
+                                    ) {
+                                        Icon(imageVector = Icons.Filled.Check, null)
+                                    }
+                                } else {
+                                    IconButton(
+                                        modifier = Modifier
+                                            .padding(8.dp)
+                                            .height(38.dp)
+                                            .aspectRatio(1.6f)
+                                            .align(Alignment.BottomEnd),
+                                        onClick = { AccountsHelper.buyBackground(allBackgrounds[it]) },
+                                        colors = IconButtonDefaults.iconButtonColors(
+                                            containerColor = MaterialTheme.colorScheme.tertiary,
+                                            contentColor = MaterialTheme.colorScheme.onTertiary,
+                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7f),
+                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.7f),
+                                        )
+                                    ) {
+                                        Text("250\uD83E\uDE99")
+                                    }
+                                }
                             }
                             Spacer(modifier = Modifier.width(10.dp))
                             Box(
@@ -439,6 +477,41 @@ fun ProfileScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     contentScale = ContentScale.Crop
                                 )
+                                if (availableBackgrounds.contains(allBackgrounds[it])) {
+                                    IconButton(
+                                        modifier = Modifier
+                                            .padding(8.dp)
+                                            .height(38.dp)
+                                            .aspectRatio(1.6f)
+                                            .align(Alignment.BottomEnd),
+                                        onClick = { AccountsHelper.selectBackground(allBackgrounds[it]) },
+                                        colors = IconButtonDefaults.iconButtonColors(
+                                            containerColor = MaterialTheme.colorScheme.tertiary,
+                                            contentColor = MaterialTheme.colorScheme.onTertiary,
+                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7f),
+                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.7f),
+                                        )
+                                    ) {
+                                        Icon(imageVector = Icons.Filled.Check, null)
+                                    }
+                                } else {
+                                    IconButton(
+                                        modifier = Modifier
+                                            .padding(8.dp)
+                                            .height(38.dp)
+                                            .aspectRatio(1.6f)
+                                            .align(Alignment.BottomEnd),
+                                        onClick = { AccountsHelper.buyBackground(allBackgrounds[it]) },
+                                        colors = IconButtonDefaults.iconButtonColors(
+                                            containerColor = MaterialTheme.colorScheme.tertiary,
+                                            contentColor = MaterialTheme.colorScheme.onTertiary,
+                                            disabledContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7f),
+                                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.7f),
+                                        )
+                                    ) {
+                                        Text("250\uD83E\uDE99")
+                                    }
+                                }
                             }
                         }
                     }
