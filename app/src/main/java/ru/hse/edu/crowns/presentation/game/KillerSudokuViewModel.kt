@@ -57,6 +57,11 @@ class KillerSudokuViewModel @Inject constructor() : GameViewModel() {
                 toaster.showToast("Нельзя изменять стартовые поля.")
                 return
             }
+        if (gameState.playerCells.any { it.position == action.position }) {
+            gameState = gameState.copy(
+                playerCells = gameState.playerCells.filter { it.position != action.position }
+            )
+        }
         gameState = gameState.copy(
             playerCells = gameState.playerCells.plus(
                 SudokuCell(
@@ -66,5 +71,8 @@ class KillerSudokuViewModel @Inject constructor() : GameViewModel() {
                 )
             )
         )
+        if (gameState.playerCells.filter { it.isCorrect }.size == 81 - gameState.startCells.size) {
+            isWin.value = true
+        }
     }
 }
