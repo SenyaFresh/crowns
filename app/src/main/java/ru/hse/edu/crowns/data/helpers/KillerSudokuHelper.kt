@@ -64,13 +64,22 @@ object KillerSudokuHelper {
             SumZone(sumValue, cage)
         }
 
-        val indices = (0 until SIZE * SIZE).shuffled(random)
-        val openSet = indices.take(startCount).toSet()
+        val working = solution.map { it.copyOf() }.toTypedArray()
+        val positions = (0 until SIZE * SIZE).map { Position(it / SIZE, it % SIZE) }.shuffled(random)
+        for (pos in positions) {
+            val r = pos.row
+            val c = pos.column
+            val temp = working[r][c]
+            working[r][c] = BACKTRACK_EMPTY
+            if (countSolutions(working) != 1) {
+                working[r][c] = temp
+            }
+        }
+
         val startCells = mutableListOf<SudokuCell>()
         for (r in 0 until SIZE) for (c in 0 until SIZE) {
-            val idx = r * SIZE + c
-            if (idx in openSet) {
-                startCells += SudokuCell(Position(r, c), solution[r][c], true)
+            if (working[r][c] != BACKTRACK_EMPTY) {
+                startCells += SudokuCell(Position(r, c), working[r][c], true)
             }
         }
 
@@ -103,6 +112,30 @@ object KillerSudokuHelper {
             if (grid[r][c] == num) return false
         }
         return true
+    }
+
+    private fun countSolutions(grid: Array<IntArray>): Int {
+        fun backtrack(): Int {
+            for (r in 0 until SIZE) for (c in 0 until SIZE) {
+                if (grid[r][c] == BACKTRACK_EMPTY) {
+                    var total = 0
+                    for (n in 1..SIZE) {
+                        if (isValid(grid, r, c, n)) {
+                            grid[r][c] = n
+                            total += backtrack()
+                            if (total > 1) {
+                                grid[r][c] = BACKTRACK_EMPTY
+                                return total
+                            }
+                            grid[r][c] = BACKTRACK_EMPTY
+                        }
+                    }
+                    return total
+                }
+            }
+            return 1
+        }
+        return backtrack()
     }
 
     fun generateHint(cells: List<SudokuCell>): SudokuCell? {
